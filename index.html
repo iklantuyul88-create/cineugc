@@ -161,165 +161,248 @@ tailwind.config={theme:{extend:{colors:{dark:'#0A0A0A',darker:'#050505','dark-gr
 
 <script>
 // ==============================================
-// KODE LENGKAP DAN TERUJI UNTUK CINEUGC
+// CINEUGC DENGAN INTEGRASI RUNWAY ML GEN-3
 // ==============================================
-let currentStep = 1;
-const totalSteps = 6;
-const prevBtn = document.getElementById('prev');
-const nextBtn = document.getElementById('next');
-const progressBar = document.getElementById('progress');
-const stepNumber = document.getElementById('stepNum');
+const RUNWAY_API_KEY = "YOUR_RUNWAY_API_KEY"; // GANTI DENGAN API KEY ANDA DISINI
 
-// Inisialisasi saat halaman dimuat
-window.addEventListener('load', function() {
-    updateStep();
-    initUploads();
-    initButtons();
-    initSlider();
-});
+window.onload = function() {
+    // ======================
+    // 1. NAVIGASI LANGKAH
+    // ======================
+    let step = 1;
+    const total = 6;
+    const prev = document.getElementById('prev');
+    const next = document.getElementById('next');
+    const progress = document.getElementById('progress');
+    const stepNum = document.getElementById('stepNum');
+    let characterBase64 = "";
+    let productBase64 = "";
+    let selectedPersonality = "Natural";
+    let selectedFormat = "Vertikal (9:16)";
+    let selectedAngle = "Dekat";
+    let faceConsistency = 85;
 
-// Fungsi update langkah
-function updateStep() {
-    // Sembunyikan semua langkah
-    document.querySelectorAll('.step').forEach(step => {
-        step.classList.add('hidden');
-    });
-    
-    // Tampilkan langkah saat ini
-    document.getElementById(`s${currentStep}`).classList.remove('hidden');
-    
-    // Update progress bar
-    progressBar.style.width = `${(currentStep / totalSteps) * 100}%`;
-    
-    // Update nomor langkah
-    stepNumber.textContent = currentStep;
-    
-    // Disable tombol sebelumnya di langkah 1
-    prevBtn.disabled = currentStep === 1;
-    
-    // Ubah teks tombol di langkah terakhir
-    if (currentStep === totalSteps) {
-        nextBtn.innerHTML = 'Generate Video <i class="fa fa-video-camera ml-2"></i>';
-        nextBtn.onclick = generateVideo;
-    } else {
-        nextBtn.innerHTML = 'Selanjutnya <i class="fa fa-arrow-right ml-2"></i>';
-        nextBtn.onclick = goToNextStep;
+    function updateUI() {
+        for(let i=1; i<=total; i++) {
+            document.getElementById('s'+i).style.display = 'none';
+        }
+        document.getElementById('s'+step).style.display = 'block';
+        
+        progress.style.width = (step/total*100)+'%';
+        stepNum.textContent = step;
+        prev.disabled = step === 1;
+        
+        if(step === total) {
+            next.textContent = 'Generate Video';
+            next.onclick = generateVideoWithRunway;
+        } else {
+            next.textContent = 'Selanjutnya →';
+            next.onclick = nextStep;
+        }
     }
-}
 
-// Fungsi ke langkah berikutnya
-function goToNextStep() {
-    if (currentStep < totalSteps) {
-        currentStep++;
-        updateStep();
+    function nextStep() {
+        if(step < total) {
+            step++;
+            updateUI();
+        }
     }
-}
 
-// Fungsi ke langkah sebelumnya
-prevBtn.onclick = function() {
-    if (currentStep > 1) {
-        currentStep--;
-        updateStep();
+    prev.onclick = function() {
+        if(step > 1) {
+            step--;
+            updateUI();
+        }
     }
-};
 
-// Inisialisasi upload gambar
-function initUploads() {
-    // Upload Karakter
-    document.getElementById('charUp').addEventListener('click', function() {
+    // ======================
+    // 2. UPLOAD GAMBAR
+    // ======================
+    document.getElementById('charUp').onclick = function() {
         document.getElementById('charFile').click();
-    });
-    
-    document.getElementById('charFile').addEventListener('change', function(e) {
-        if (e.target.files && e.target.files[0]) {
+    }
+
+    document.getElementById('charFile').onchange = function(e) {
+        if(e.target.files[0]) {
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = function(ev) {
+                characterBase64 = ev.target.result;
                 document.getElementById('charPreview').innerHTML = 
-                    `<img src="${event.target.result}" class="w-full h-full object-cover rounded-xl">`;
-            };
+                    `<img src="${ev.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
+            }
             reader.readAsDataURL(e.target.files[0]);
         }
-    });
-    
-    // Upload Produk
-    document.getElementById('prodUp').addEventListener('click', function() {
+    }
+
+    document.getElementById('prodUp').onclick = function() {
         document.getElementById('prodFile').click();
-    });
-    
-    document.getElementById('prodFile').addEventListener('change', function(e) {
-        if (e.target.files && e.target.files[0]) {
+    }
+
+    document.getElementById('prodFile').onchange = function(e) {
+        if(e.target.files[0]) {
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = function(ev) {
+                productBase64 = ev.target.result;
                 document.getElementById('prodPreview').innerHTML = 
-                    `<img src="${event.target.result}" class="w-full h-full object-cover rounded-xl">`;
-            };
+                    `<img src="${ev.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
+            }
             reader.readAsDataURL(e.target.files[0]);
         }
-    });
-}
+    }
 
-// Inisialisasi tombol pilihan
-function initButtons() {
-    const buttonGroups = ['.p-btn', '.pr-btn', '.f-card', '.a-card', '.prm-btn', '.cat-btn'];
-    
-    buttonGroups.forEach(group => {
-        document.querySelectorAll(group).forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll(group).forEach(b => {
-                    b.classList.remove('active', 'bg-accent-gold', 'text-dark');
-                });
-                this.classList.add('active', 'bg-accent-gold', 'text-dark');
-            });
-        });
+    // ======================
+    // 3. TOMBOL PILIHAN
+    // ======================
+    document.querySelectorAll('.p-btn').forEach(btn => {
+        btn.onclick = function() {
+            document.querySelectorAll('.p-btn').forEach(b => b.classList.remove('active', 'bg-accent-gold', 'text-dark'));
+            this.classList.add('active', 'bg-accent-gold', 'text-dark');
+            selectedPersonality = this.textContent.trim();
+        }
     });
-}
 
-// Inisialisasi slider konsistensi
-function initSlider() {
-    const slider = document.getElementById('idStr');
-    const value = document.getElementById('idVal');
-    
-    slider.addEventListener('input', function() {
-        value.textContent = `${this.value}%`;
+    document.querySelectorAll('.f-card').forEach(btn => {
+        btn.onclick = function() {
+            document.querySelectorAll('.f-card').forEach(b => b.classList.remove('active', 'bg-accent-gold', 'text-dark'));
+            this.classList.add('active', 'bg-accent-gold', 'text-dark');
+            selectedFormat = this.textContent.trim();
+        }
     });
-}
 
-// Fungsi Generate Video (Sementara menampilkan pesan sukses)
-function generateVideo() {
-    nextBtn.disabled = true;
-    nextBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> Memproses...';
-    
-    // Simulasi proses generate video (3 detik)
-    setTimeout(function() {
+    document.querySelectorAll('.a-card').forEach(btn => {
+        btn.onclick = function() {
+            document.querySelectorAll('.a-card').forEach(b => b.classList.remove('active', 'bg-accent-gold', 'text-dark'));
+            this.classList.add('active', 'bg-accent-gold', 'text-dark');
+            selectedAngle = this.textContent.trim();
+        }
+    });
+
+    // ======================
+    // 4. SLIDER KONSISTENSI
+    // ======================
+    document.getElementById('idStr').oninput = function() {
+        faceConsistency = this.value;
+        document.getElementById('idVal').textContent = faceConsistency + '%';
+    }
+
+    // ======================
+    // 5. GENERATE VIDEO DENGAN RUNWAY
+    // ======================
+    async function generateVideoWithRunway() {
+        // Validasi
+        if(!characterBase64) {
+            alert('Silakan upload foto karakter terlebih dahulu!');
+            return;
+        }
+
+        next.disabled = true;
+        next.textContent = 'Memulai Generate...';
         document.getElementById('videoResult').innerHTML = `
-            <div class="text-center">
-                <div class="text-green-400 text-xl font-semibold mb-4">
-                    <i class="fa fa-check-circle mr-2"></i> Prompt Siap!
+            <div class="text-center py-8">
+                <div class="text-yellow-400 text-xl font-bold mb-4">
+                    <i class="fa fa-spinner fa-spin mr-2"></i> Sedang Membuat Video...
                 </div>
-                <p class="text-gray-400 mb-6">
-                    Prompt video UGC Anda sudah dibuat secara otomatis.
-                    Klik tombol di bawah untuk menyalin dan buka Seedance.
-                </p>
-                <button onclick="copyPrompt()" class="bg-accent-gold text-dark px-6 py-3 rounded-xl font-semibold mr-4 mb-4">
-                    <i class="fa fa-copy mr-2"></i> Salin Prompt
-                </button>
-                <a href="https://seedance.ai/" target="_blank" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold mb-4 inline-block">
-                    <i class="fa fa-external-link mr-2"></i> Buka Seedance
-                </a>
+                <p class="text-gray-400">Proses ini membutuhkan sekitar 30-60 detik. Mohon tunggu.</p>
+                <div id="progressText" class="mt-4 text-sm text-gray-500">Mengirim permintaan ke Runway...</div>
             </div>
         `;
-        
-        nextBtn.disabled = false;
-        nextBtn.innerHTML = 'Generate Video <i class="fa fa-video-camera ml-2"></i>';
-    }, 3000);
-}
 
-// Fungsi salin prompt
-function copyPrompt() {
-    const prompt = "Buat video UGC iklan produk sinematik. Seorang wanita sedang mereview produk skincare dengan gaya natural dan mewah. Format video vertikal 9:16, sudut pandang dekat. Konsistensi wajah 85%. Pencahayaan alami, resolusi 1080p, 30fps.";
-    
-    navigator.clipboard.writeText(prompt).then(function() {
-        alert('Prompt berhasil disalin ke clipboard!');
-    });
+        try {
+            // Buat prompt berdasarkan pilihan pengguna
+            const aspectRatio = selectedFormat.includes("Vertikal") ? "9:16" : "16:9";
+            const prompt = `UGC video iklan produk, gaya ${selectedPersonality.toLowerCase()}, sudut pandang ${selectedAngle.toLowerCase()}. Seorang orang sedang mereview produk dengan antusias, menunjukkan produk dengan jelas. Konsistensi wajah ${faceConsistency}%. Pencahayaan alami, resolusi 1080p, 30fps, gerakan halus.`;
+
+            // Kirim permintaan ke API Runway
+            const response = await fetch("https://api.runwayml.com/v1/image_to_video", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${RUNWAY_API_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    prompt_image: characterBase64.split(',')[1], // Hapus header base64
+                    prompt: prompt,
+                    duration: 4,
+                    aspect_ratio: aspectRatio,
+                    motion_bucket: 127
+                })
+            });
+
+            if(!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || "Gagal mengirim permintaan");
+            }
+
+            const data = await response.json();
+            const taskId = data.id;
+            document.getElementById('progressText').textContent = "Video sedang diproses oleh Runway...";
+
+            // Polling status task sampai selesai
+            let videoUrl = null;
+            let attempts = 0;
+            const maxAttempts = 20; // Maksimal 100 detik (20 x 5 detik)
+
+            while(!videoUrl && attempts < maxAttempts) {
+                attempts++;
+                await new Promise(resolve => setTimeout(resolve, 5000));
+
+                const statusRes = await fetch(`https://api.runwayml.com/v1/tasks/${taskId}`, {
+                    headers: { "Authorization": `Bearer ${RUNWAY_API_KEY}` }
+                });
+
+                const statusData = await statusRes.json();
+
+                if(statusData.status === "succeeded") {
+                    videoUrl = statusData.output[0];
+                    break;
+                } else if(statusData.status === "failed") {
+                    throw new Error("Runway gagal memproses video. Silakan coba lagi.");
+                }
+
+                document.getElementById('progressText').textContent = `Proses: ${Math.round((attempts/maxAttempts)*100)}%`;
+            }
+
+            if(!videoUrl) {
+                throw new Error("Waktu proses habis. Silakan cek status di dashboard Runway.");
+            }
+
+            // Tampilkan video hasil
+            document.getElementById('videoResult').innerHTML = `
+                <div class="text-center">
+                    <div class="text-green-400 text-xl font-bold mb-4">
+                        <i class="fa fa-check-circle mr-2"></i> Video Berhasil Dibuat!
+                    </div>
+                    <video src="${videoUrl}" controls autoplay loop class="w-full rounded-xl mb-6 shadow-2xl"></video>
+                    <a href="${videoUrl}" download="cineugc-video.mp4" class="bg-accent-gold text-dark px-8 py-3 rounded-xl font-bold mr-4 mb-4 inline-block">
+                        <i class="fa fa-download mr-2"></i> Download Video
+                    </a>
+                    <button onclick="generateVideoWithRunway()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold mb-4 inline-block">
+                        <i class="fa fa-redo mr-2"></i> Generate Lagi
+                    </button>
+                </div>
+            `;
+
+        } catch (error) {
+            document.getElementById('videoResult').innerHTML = `
+                <div class="text-center py-4">
+                    <div class="text-red-400 text-xl font-bold mb-4">
+                        <i class="fa fa-exclamation-circle mr-2"></i> Terjadi Kesalahan
+                    </div>
+                    <p class="text-gray-400 mb-4">${error.message}</p>
+                    <button onclick="generateVideoWithRunway()" class="bg-red-600 text-white px-6 py-3 rounded-xl font-bold">
+                        Coba Lagi
+                    </button>
+                </div>
+            `;
+        } finally {
+            next.disabled = false;
+            next.textContent = 'Generate Video';
+        }
+    }
+
+    // ======================
+    // INISIALISASI AWAL
+    // ======================
+    updateUI();
 }
 </script>
