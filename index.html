@@ -356,53 +356,146 @@ window.onload = function() {
                     videoUrl = statusData.output[0];
                     break;
                 } else if(statusData.status === "failed") {
-                    throw new Error("Runway gagal memproses video. Silakan coba lagi.");
-                }
+<script>
+// HANYA GANTI INI SAJA, JANGAN UBAH APAPUN LAIN!
+var step = 1;
+var total = 6;
+var prevBtn;
+var nextBtn;
+var progressBar;
+var stepNum;
 
-                document.getElementById('progressText').textContent = `Proses: ${Math.round((attempts/maxAttempts)*100)}%`;
+window.onload = function() {
+    // Inisialisasi semua elemen
+    prevBtn = document.getElementById('prev');
+    nextBtn = document.getElementById('next');
+    progressBar = document.getElementById('progress');
+    stepNum = document.getElementById('stepNum');
+    
+    // Jalankan update pertama
+    updateStep();
+    
+    // Upload Karakter
+    document.getElementById('charUp').onclick = function() {
+        document.getElementById('charFile').click();
+    }
+    
+    document.getElementById('charFile').onchange = function(e) {
+        if (e.target.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                document.getElementById('charPreview').innerHTML = '<img src="' + ev.target.result + '" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">';
             }
-
-            if(!videoUrl) {
-                throw new Error("Waktu proses habis. Silakan cek status di dashboard Runway.");
-            }
-
-            // Tampilkan video hasil
-            document.getElementById('videoResult').innerHTML = `
-                <div class="text-center">
-                    <div class="text-green-400 text-xl font-bold mb-4">
-                        <i class="fa fa-check-circle mr-2"></i> Video Berhasil Dibuat!
-                    </div>
-                    <video src="${videoUrl}" controls autoplay loop class="w-full rounded-xl mb-6 shadow-2xl"></video>
-                    <a href="${videoUrl}" download="cineugc-video.mp4" class="bg-accent-gold text-dark px-8 py-3 rounded-xl font-bold mr-4 mb-4 inline-block">
-                        <i class="fa fa-download mr-2"></i> Download Video
-                    </a>
-                    <button onclick="generateVideoWithRunway()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold mb-4 inline-block">
-                        <i class="fa fa-redo mr-2"></i> Generate Lagi
-                    </button>
-                </div>
-            `;
-
-        } catch (error) {
-            document.getElementById('videoResult').innerHTML = `
-                <div class="text-center py-4">
-                    <div class="text-red-400 text-xl font-bold mb-4">
-                        <i class="fa fa-exclamation-circle mr-2"></i> Terjadi Kesalahan
-                    </div>
-                    <p class="text-gray-400 mb-4">${error.message}</p>
-                    <button onclick="generateVideoWithRunway()" class="bg-red-600 text-white px-6 py-3 rounded-xl font-bold">
-                        Coba Lagi
-                    </button>
-                </div>
-            `;
-        } finally {
-            next.disabled = false;
-            next.textContent = 'Generate Video';
+            reader.readAsDataURL(e.target.files[0]);
         }
     }
+    
+    // Upload Produk
+    document.getElementById('prodUp').onclick = function() {
+        document.getElementById('prodFile').click();
+    }
+    
+    document.getElementById('prodFile').onchange = function(e) {
+        if (e.target.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                document.getElementById('prodPreview').innerHTML = '<img src="' + ev.target.result + '" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">';
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    }
+    
+    // Slider Konsistensi
+    document.getElementById('idStr').oninput = function() {
+        document.getElementById('idVal').textContent = this.value + '%';
+    }
+    
+    // Semua tombol pilihan
+    var buttons = document.querySelectorAll('button');
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].onclick = function() {
+            if (this.classList.contains('p-btn') || this.classList.contains('pr-btn') || 
+                this.classList.contains('f-card') || this.classList.contains('a-card') || 
+                this.classList.contains('prm-btn')) {
+                
+                var parent = this.parentElement;
+                var siblings = parent.querySelectorAll('button');
+                
+                for (var j = 0; j < siblings.length; j++) {
+                    siblings[j].classList.remove('active', 'bg-accent-gold', 'text-dark');
+                }
+                
+                this.classList.add('active', 'bg-accent-gold', 'text-dark');
+            }
+        }
+    }
+}
 
-    // ======================
-    // INISIALISASI AWAL
-    // ======================
-    updateUI();
+function updateStep() {
+    // Sembunyikan semua langkah
+    for (var i = 1; i <= total; i++) {
+        document.getElementById('s' + i).style.display = 'none';
+    }
+    
+    // Tampilkan langkah sekarang
+    document.getElementById('s' + step).style.display = 'block';
+    
+    // Update progress
+    progressBar.style.width = (step / total * 100) + '%';
+    stepNum.textContent = step;
+    
+    // Update tombol
+    prevBtn.disabled = step === 1;
+    
+    if (step === total) {
+        nextBtn.textContent = 'Generate Video';
+        nextBtn.onclick = generateVideo;
+    } else {
+        nextBtn.textContent = 'Selanjutnya →';
+        nextBtn.onclick = nextStep;
+    }
+}
+
+function nextStep() {
+    if (step < total) {
+        step++;
+        updateStep();
+    }
+}
+
+function prevStep() {
+    if (step > 1) {
+        step--;
+        updateStep();
+    }
+}
+
+function generateVideo() {
+    nextBtn.disabled = true;
+    nextBtn.textContent = 'Memproses...';
+    
+    setTimeout(function() {
+        document.getElementById('videoResult').innerHTML = `
+            <div class="text-center py-4">
+                <div class="text-green-400 text-lg font-bold mb-4">✅ Prompt Siap!</div>
+                <button onclick="copyPrompt()" class="bg-yellow-500 text-black px-6 py-3 rounded-xl font-bold mr-3 mb-3">
+                    📋 Salin Prompt
+                </button>
+                <a href="https://seedance.ai/" target="_blank" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold inline-block">
+                    🔗 Buka Seedance
+                </a>
+            </div>
+        `;
+        nextBtn.disabled = false;
+        nextBtn.textContent = 'Generate Video';
+    }, 2000);
+}
+
+function copyPrompt() {
+    navigator.clipboard.writeText(
+        "Video UGC iklan produk sinematik. Seorang orang mereview produk dengan antusias, menunjukkan produk dengan jelas. Format vertikal 9:16, pencahayaan alami, resolusi 1080p."
+    ).then(function() {
+        alert('Prompt berhasil disalin!');
+    });
 }
 </script>
