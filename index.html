@@ -8,116 +8,319 @@
 <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 <script>
-tailwind.config={theme:{extend:{colors:{dark:'#0A0A0A',darker:'#050505','dark-gray':'#121212','medium-gray':'#1E1E1E','light-gray':'#2A2A2A','accent-gold':'#D4AF37'},fontFamily:{inter:['Inter','system-ui']},animation:{'fade-in':'fadeIn 0.5s ease-in','slide-up':'slideUp 0.4s ease-out'},keyframes:{fadeIn:{'0%':{opacity:'0'},'100%':{opacity:'1'}},slideUp:{'0%':{transform:'translateY(20px)',opacity:'0'},'100%':{transform:'translateY(0)',opacity:'1'}}}}}}
+tailwind.config={
+    theme:{
+        extend:{
+            colors:{
+                dark:'#0A0A0A',
+                darker:'#050505',
+                'dark-gray':'#121212',
+                'medium-gray':'#1E1E1E',
+                'light-gray':'#2A2A2A',
+                'accent-gold':'#D4AF37'
+            },
+            fontFamily:{inter:['Inter','system-ui']},
+            animation:{
+                'fade-in':'fadeIn 0.5s ease-in',
+                'slide-up':'slideUp 0.4s ease-out'
+            },
+            keyframes:{
+                fadeIn:{'0%':{opacity:'0'},'100%':{opacity:'1'}},
+                slideUp:{'0%':{transform:'translateY(20px)',opacity:'0'},'100%':{transform:'translateY(0)',opacity:'1'}}
+            }
+        }
+    }
+}
 </script>
 <style type="text/tailwindcss">
-@layer utilities{.glass{background:rgba(30,30,30,0.7);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1)}.glass-light{background:rgba(42,42,42,0.6);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08)}.text-gradient{background:linear-gradient(135deg,#fff 0%,#d4af37 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.scrollbar-hide::-webkit-scrollbar{display:none}}
+@layer utilities{
+    .glass{
+        background:rgba(30,30,30,0.7);
+        backdrop-filter:blur(20px);
+        border:1px solid rgba(255,255,255,0.1)
+    }
+    .glass-light{
+        background:rgba(42,42,42,0.6);
+        backdrop-filter:blur(10px);
+        border:1px solid rgba(255,255,255,0.08)
+    }
+    .text-gradient{
+        background:linear-gradient(135deg,#fff 0%,#d4af37 100%);
+        -webkit-background-clip:text;
+        -webkit-text-fill-color:transparent
+    }
+    .scrollbar-hide::-webkit-scrollbar{display:none}
+}
 </style>
 </head>
 <body class="bg-dark text-white font-inter min-h-screen">
 <nav class="glass fixed top-0 left-0 right-0 z-50 px-4 py-3">
 <div class="max-w-7xl mx-auto flex justify-between items-center">
-<div class="flex items-center space-x-2"><i class="fa fa-film text-accent-gold"></i><h1 class="text-xl font-bold text-gradient">CineUGC</h1></div>
-<div class="hidden md:flex space-x-6"><a href="#" class="text-gray-300 hover:text-white">Dashboard</a><a href="#" class="text-gray-300 hover:text-white">Proyek</a><a href="#" class="text-gray-300 hover:text-white">Template</a></div>
-<button class="glass-light px-4 py-2 rounded-lg"><i class="fa fa-user-circle mr-2"></i>Akun</button>
+<div class="flex items-center space-x-2">
+    <i class="fa fa-film text-accent-gold"></i>
+    <h1 class="text-xl font-bold text-gradient">CineUGC</h1>
+</div>
+<div class="hidden md:flex space-x-6">
+    <a href="#" class="text-gray-300 hover:text-white">Dashboard</a>
+    <a href="#" class="text-gray-300 hover:text-white">Proyek</a>
+    <a href="#" class="text-gray-300 hover:text-white">Template</a>
+</div>
+<button class="glass-light px-4 py-2 rounded-lg">
+    <i class="fa fa-user-circle mr-2"></i>Akun
+</button>
 </div>
 </nav>
 
 <main class="pt-20 pb-24 px-4 max-w-7xl mx-auto">
 <div class="mb-8 animate-fade-in">
-<div class="flex justify-between mb-2"><h2 class="text-2xl font-bold">Buat Iklan UGC Sinematik</h2><span class="text-gray-400">Langkah <span id="stepNum">1</span>/6</span></div>
-<div class="w-full bg-medium-gray rounded-full h-2"><div id="progress" class="bg-accent-gold h-full rounded-full transition-all duration-500" style="width:16.66%"></div></div>
-<div class="flex justify-between mt-2 text-xs text-gray-500"><span class="text-accent-gold">Karakter</span><span>Produk</span><span>Format</span><span>Sudut</span><span>Storyboard</span><span>Ekspor</span></div>
-</div><!-- Upload Karakter (Sudah Diperbaiki 100% untuk HP) -->
-<div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 hover:border-accent-gold cursor-pointer" id="charUp">
-    <input type="file" id="charFile" accept="image/*" class="hidden">
-    <div id="charPreview" class="w-full h-full flex items-center justify-center">
-        <div class="text-center">
-            <i class="fa fa-user-circle text-5xl text-gray-500 mb-4"></i>
-            <p class="text-gray-400 text-center">Seret foto atau klik</p>
+<div class="flex justify-between mb-2">
+    <h2 class="text-2xl font-bold">Buat Iklan UGC Sinematik</h2>
+    <span class="text-gray-400">Langkah <span id="stepNum">1</span>/6</span>
+</div>
+<div class="w-full bg-medium-gray rounded-full h-2">
+    <div id="progress" class="bg-accent-gold h-full rounded-full transition-all duration-500" style="width:16.66%"></div>
+</div>
+<div class="flex justify-between mt-2 text-xs text-gray-500">
+    <span class="text-accent-gold">Karakter</span>
+    <span>Produk</span>
+    <span>Format</span>
+    <span>Sudut</span>
+    <span>Storyboard</span>
+    <span>Ekspor</span>
+</div>
+</div>
+
+<!-- Langkah 1 : Karakter -->
+<div class="step" id="s1">
+    <h3 class="text-xl font-semibold mb-6">Tambahkan Karakter</h3>
+    <div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 hover:border-accent-gold cursor-pointer" id="charUp">
+        <input type="file" id="charFile" accept="image/*" class="hidden">
+        <div id="charPreview" class="w-full h-full flex items-center justify-center">
+            <div class="text-center">
+                <i class="fa fa-user-circle text-5xl text-gray-500 mb-4"></i>
+                <p class="text-gray-400 text-center">Seret foto atau klik</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass rounded-2xl p-6 mt-6">
+        <h4 class="font-medium mb-4">Pengaturan</h4>
+        <div class="mb-6">
+            <label class="block text-sm text-gray-400 mb-2">Konsistensi Wajah</label>
+            <input type="range" min="0" max="100" value="85" class="w-full accent-accent-gold" id="idStr">
+            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                <span>Fleksibel</span>
+                <span id="idVal">85%</span>
+                <span>Konsisten</span>
+            </div>
+        </div>
+        <div class="mb-6">
+            <label class="block text-sm text-gray-400 mb-2">Kepribadian</label>
+            <div class="grid grid-cols-2 gap-2">
+                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm active">Mewah</button>
+                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Lucu</button>
+                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Petualang</button>
+                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Dokumenter</button>
+                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Reviewer</button>
+                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Lembut</button>
+                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Energi</button>
+                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Minimalis</button>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="glass rounded-2xl p-6">
-<h4 class="font-medium mb-4">Pengaturan</h4>
-<div class="mb-6"><label class="block text-sm text-gray-400 mb-2">Konsistensi Wajah</label><input type="range" min="0" max="100" value="85" class="w-full accent-accent-gold" id="idStr"><div class="flex justify-between text-xs text-gray-500 mt-1"><span>Fleksibel</span><span id="idVal">85%</span><span>Konsisten</span></div></div>
-<div class="mb-6"><label class="block text-sm text-gray-400 mb-2">Kepribadian</label><div class="grid grid-cols-2 gap-2"><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm active">Mewah</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Lucu</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Petualang</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Dokumenter</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Reviewer</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Lembut</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Energi</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Minimalis</button></div></div>
-</div>
-</div><!-- Upload Produk (Sudah Diperbaiki) -->
-<div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 hover:border-accent-gold cursor-pointer" id="prodUp">
-    <input type="file" id="prodFile" accept="image/*" class="hidden">
-    <div id="prodPreview" class="w-full h-full flex items-center justify-center">
-        <div class="text-center">
-            <i class="fa fa-box text-5xl text-gray-500 mb-4"></i>
-            <p class="text-gray-400 text-center">Seret foto atau klik</p>
+<!-- Langkah 2 : Produk -->
+<div class="step hidden" id="s2">
+    <h3 class="text-xl font-semibold mb-6">Tambahkan Produk</h3>
+    <div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 hover:border-accent-gold cursor-pointer" id="prodUp">
+        <input type="file" id="prodFile" accept="image/*" class="hidden">
+        <div id="prodPreview" class="w-full h-full flex items-center justify-center">
+            <div class="text-center">
+                <i class="fa fa-box text-5xl text-gray-500 mb-4"></i>
+                <p class="text-gray-400 text-center">Seret foto atau klik</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass rounded-2xl p-6 mt-6">
+        <h4 class="font-medium mb-4">Pengaturan</h4>
+        <div class="mb-4">
+            <label class="block text-sm text-gray-400 mb-2">Kategori</label>
+            <select class="w-full bg-medium-gray border border-gray-600 rounded-lg px-4 py-2">
+                <option>Elektronik</option>
+                <option>Kosmetik</option>
+                <option>Fashion</option>
+                <option>Makanan</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label class="block text-sm text-gray-400 mb-2">Prioritas</label>
+            <div class="flex space-x-2">
+                <button class="pr-btn w-full py-2 rounded-lg bg-accent-gold text-dark">1</button>
+                <button class="pr-btn w-full py-2 rounded-lg glass-light">2</button>
+                <button class="pr-btn w-full py-2 rounded-lg glass-light">3</button>
+                <button class="pr-btn w-full py-2 rounded-lg glass-light">4</button>
+                <button class="pr-btn w-full py-2 rounded-lg glass-light">5</button>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="glass rounded-2xl p-6">
-<h4 class="font-medium mb-4">Pengaturan</h4>
-<div class="mb-4"><label class="block text-sm text-gray-400 mb-2">Kategori</label><select class="w-full bg-medium-gray border border-gray-600 rounded-lg px-4 py-2"><option>Elektronik</option><option>Kosmetik</option><option>Fashion</option><option>Makanan</option></select></div>
-<div class="mb-4"><label class="block text-sm text-gray-400 mb-2">Prioritas</label><div class="flex space-x-2"><button class="pr-btn w-full py-2 rounded-lg bg-accent-gold text-dark">1</button><button class="pr-btn w-full py-2 rounded-lg glass-light">2</button><button class="pr-btn w-full py-2 rounded-lg glass-light">3</button><button class="pr-btn w-full py-2 rounded-lg glass-light">4</button><button class="pr-btn w-full py-2 rounded-lg glass-light">5</button></div></div>
-</div>
-</div>
-</div>
-
-<div id="s3" class="step hidden">
+<!-- Langkah 3 : Format -->
+<div class="step hidden" id="s3">
 <h3 class="text-xl font-semibold mb-6">Pilih Format</h3>
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent active"><div class="w-16 h-28 bg-medium-gray rounded mx-auto mb-3"></div><h4 class="font-medium">9:16</h4><p class="text-xs text-gray-400">TikTok</p></div>
-<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent"><div class="w-28 h-16 bg-medium-gray rounded mx-auto mb-3"></div><h4 class="font-medium">16:9</h4><p class="text-xs text-gray-400">YouTube</p></div>
-<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent"><div class="w-20 h-20 bg-medium-gray rounded mx-auto mb-3"></div><h4 class="font-medium">1:1</h4><p class="text-xs text-gray-400">Instagram</p></div>
-<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent"><div class="w-20 h-25 bg-medium-gray rounded mx-auto mb-3"></div><h4 class="font-medium">4:5</h4><p class="text-xs text-gray-400">Iklan</p></div>
-<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent"><div class="w-32 h-18 bg-medium-gray rounded mx-auto mb-3"></div><h4 class="font-medium">2.39:1</h4><p class="text-xs text-gray-400">Sinematik</p></div>
-<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent"><div class="w-20 h-20 bg-medium-gray rounded mx-auto mb-3 flex items-center justify-center"><i class="fa fa-cog text-gray-400"></i></div><h4 class="font-medium">Kustom</h4></div>
+<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent active">
+    <div class="w-16 h-28 bg-medium-gray rounded mx-auto mb-3"></div>
+    <h4 class="font-medium">9:16</h4>
+    <p class="text-xs text-gray-400">TikTok</p>
+</div>
+<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent">
+    <div class="w-28 h-16 bg-medium-gray rounded mx-auto mb-3"></div>
+    <h4 class="font-medium">16:9</h4>
+    <p class="text-xs text-gray-400">YouTube</p>
+</div>
+<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent">
+    <div class="w-20 h-20 bg-medium-gray rounded mx-auto mb-3"></div>
+    <h4 class="font-medium">1:1</h4>
+    <p class="text-xs text-gray-400">Instagram</p>
+</div>
+<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent">
+    <div class="w-20 h-25 bg-medium-gray rounded mx-auto mb-3"></div>
+    <h4 class="font-medium">4:5</h4>
+    <p class="text-xs text-gray-400">Iklan</p>
+</div>
+<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent">
+    <div class="w-32 h-18 bg-medium-gray rounded mx-auto mb-3"></div>
+    <h4 class="font-medium">2.39:1</h4>
+    <p class="text-xs text-gray-400">Sinematik</p>
+</div>
+<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent">
+    <div class="w-20 h-20 bg-medium-gray rounded mx-auto mb-3 flex items-center justify-center">
+        <i class="fa fa-cog text-gray-400"></i>
+    </div>
+    <h4 class="font-medium">Kustom</h4>
+</div>
 </div>
 </div>
 
-<div id="s4" class="step hidden">
+<!-- Langkah 4 : Sudut Iklan -->
+<div class="step hidden" id="s4">
 <h3 class="text-xl font-semibold mb-6">Pilih Sudut Iklan</h3>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent active"><div class="flex items-center mb-3"><i class="fa fa-heart text-accent-gold mr-3"></i><h4 class="font-medium">Cerita Emosional</h4></div><p class="text-sm text-gray-400">Membangun koneksi emosional dengan penonton.</p></div>
-<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent"><div class="flex items-center mb-3"><i class="fa fa-wrench text-accent-gold mr-3"></i><h4 class="font-medium">Pemecahan Masalah</h4></div><p class="text-sm text-gray-400">Menunjukkan bagaimana produk menyelesaikan masalah.</p></div>
-<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent"><div class="flex items-center mb-3"><i class="fa fa-diamond text-accent-gold mr-3"></i><h4 class="font-medium">Estetika Mewah</h4></div><p class="text-sm text-gray-400">Gaya eksklusif untuk audiens premium.</p></div>
-<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent"><div class="flex items-center mb-3"><i class="fa fa-bolt text-accent-gold mr-3"></i><h4 class="font-medium">TikTok Viral</h4></div><p class="text-sm text-gray-400">Pacing cepat dan hook yang kuat.</p></div>
-<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent"><div class="flex items-center mb-3"><i class="fa fa-film text-accent-gold mr-3"></i><h4 class="font-medium">Iklan Sinematik</h4></div><p class="text-sm text-gray-400">Kualitas produksi tinggi profesional.</p></div>
+<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent active">
+    <div class="flex items-center mb-3">
+        <i class="fa fa-heart text-accent-gold mr-3"></i>
+        <h4 class="font-medium">Cerita Emosional</h4>
+    </div>
+    <p class="text-sm text-gray-400">Membangun koneksi emosional dengan penonton.</p>
+</div>
+<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent">
+    <div class="flex items-center mb-3">
+        <i class="fa fa-wrench text-accent-gold mr-3"></i>
+        <h4 class="font-medium">Pemecahan Masalah</h4>
+    </div>
+    <p class="text-sm text-gray-400">Menunjukkan bagaimana produk menyelesaikan masalah.</p>
+</div>
+<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent">
+    <div class="flex items-center mb-3">
+        <i class="fa fa-diamond text-accent-gold mr-3"></i>
+        <h4 class="font-medium">Estetika Mewah</h4>
+    </div>
+    <p class="text-sm text-gray-400">Gaya eksklusif untuk audiens premium.</p>
+</div>
+<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent">
+    <div class="flex items-center mb-3">
+        <i class="fa fa-bolt text-accent-gold mr-3"></i>
+        <h4 class="font-medium">TikTok Viral</h4>
+    </div>
+    <p class="text-sm text-gray-400">Pacing cepat dan hook yang kuat.</p>
+</div>
+<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent">
+    <div class="flex items-center mb-3">
+        <i class="fa fa-film text-accent-gold mr-3"></i>
+        <h4 class="font-medium">Iklan Sinematik</h4>
+    </div>
+    <p class="text-sm text-gray-400">Kualitas produksi tinggi profesional.</p>
+</div>
 </div>
 </div>
 
-<div id="s5" class="step hidden">
+<!-- Langkah 5 : Storyboard & Prompt -->
+<div class="step hidden" id="s5">
 <h3 class="text-xl font-semibold mb-6">Storyboard & Prompt</h3>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 <div class="lg:col-span-2">
 <div class="glass rounded-xl p-5 mb-6">
-<div class="flex justify-between mb-4"><h4 class="font-medium">Storyboard</h4><button class="text-accent-gold text-sm"><i class="fa fa-refresh mr-1"></i>Regenerasi</button></div>
+<div class="flex justify-between mb-4">
+    <h4 class="font-medium">Storyboard</h4>
+    <button class="text-accent-gold text-sm">
+        <i class="fa fa-refresh mr-1"></i>Regenerasi
+    </button>
+</div>
 <div class="space-y-4">
-<div class="glass-light rounded-lg p-4"><div class="flex items-center mb-2"><span class="bg-accent-gold text-dark text-xs font-bold px-2 py-1 rounded mr-2">0-3s</span><h5 class="font-medium">Hook: Masalah</h5></div><p class="text-sm text-gray-400">Karakter tampak frustrasi dengan masalah yang dipecahkan produk.</p></div>
-<div class="glass-light rounded-lg p-4"><div class="flex items-center mb-2"><span class="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded mr-2">3-12s</span><h5 class="font-medium">Solusi</h5></div><p class="text-sm text-gray-400">Karakter menemukan produk dan menunjukkan cara kerjanya.</p></div>
-<div class="glass-light rounded-lg p-4"><div class="flex items-center mb-2"><span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded mr-2">12-22s</span><h5 class="font-medium">Hasil</h5></div><p class="text-sm text-gray-400">Karakter menunjukkan hasil yang memuaskan.</p></div>
-<div class="glass-light rounded-lg p-4"><div class="flex items-center mb-2"><span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded mr-2">22-30s</span><h5 class="font-medium">CTA</h5></div><p class="text-sm text-gray-400">Karakter mengajak penonton untuk membeli.</p></div>
+<div class="glass-light rounded-lg p-4">
+    <div class="flex items-center mb-2">
+        <span class="bg-accent-gold text-dark text-xs font-bold px-2 py-1 rounded mr-2">0-3s</span>
+        <h5 class="font-medium">Hook: Masalah</h5>
+    </div>
+    <p class="text-sm text-gray-400">Karakter tampak frustrasi dengan masalah yang dipecahkan produk.</p>
+</div>
+<div class="glass-light rounded-lg p-4">
+    <div class="flex items-center mb-2">
+        <span class="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded mr-2">3-12s</span>
+        <h5 class="font-medium">Solusi</h5>
+    </div>
+    <p class="text-sm text-gray-400">Karakter menemukan produk dan menunjukkan cara kerjanya.</p>
+</div>
+<div class="glass-light rounded-lg p-4">
+    <div class="flex items-center mb-2">
+        <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded mr-2">12-22s</span>
+        <h5 class="font-medium">Hasil</h5>
+    </div>
+    <p class="text-sm text-gray-400">Karakter menunjukkan hasil yang memuaskan.</p>
+</div>
+<div class="glass-light rounded-lg p-4">
+    <div class="flex items-center mb-2">
+        <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded mr-2">22-30s</span>
+        <h5 class="font-medium">CTA</h5>
+    </div>
+    <p class="text-sm text-gray-400">Karakter mengajak penonton untuk membeli.</p>
+</div>
 </div>
 </div>
 </div>
 <div>
 <div class="glass rounded-xl p-5 mb-6">
 <h4 class="font-medium mb-4">Prompt AI</h4>
-<div class="space-y-3"><button class="prm-btn w-full glass-light px-4 py-3 rounded-lg text-left active">Seedance 2.0</button><button class="prm-btn w-full glass-light px-4 py-3 rounded-lg text-left">Runway</button><button class="prm-btn w-full glass-light px-4 py-3 rounded-lg text-left">Sora</button></div>
+<div class="space-y-3">
+    <button class="prm-btn w-full glass-light px-4 py-3 rounded-lg text-left active">Seedance 2.0</button>
+    <button class="prm-btn w-full glass-light px-4 py-3 rounded-lg text-left">Runway</button>
+    <button class="prm-btn w-full glass-light px-4 py-3 rounded-lg text-left">Sora</button>
+</div>
 </div>
 <div class="glass rounded-xl p-5">
-<div class="bg-darker rounded-lg p-4 mb-4 max-h-40 overflow-y-auto scrollbar-hide"><p class="text-xs text-gray-300">Cinematic UGC advertisement, 9:16, 30 seconds. Character with consistent face from reference. Shot on ARRI Alexa LF, natural lighting, 4K resolution, realistic skin texture.</p></div>
-<button class="w-full bg-accent-gold text-dark font-medium py-2 rounded-lg"><i class="fa fa-copy mr-2"></i>Salin Prompt</button>
+<div class="bg-darker rounded-lg p-4 mb-4 max-h-40 overflow-y-auto scrollbar-hide">
+    <p class="text-xs text-gray-300">Cinematic UGC advertisement, 9:16, 30 seconds. Character with consistent face from reference. Shot on ARRI Alexa LF, natural lighting, 4K resolution, realistic skin texture.</p>
+</div>
+<button class="w-full bg-accent-gold text-dark font-medium py-2 rounded-lg">
+    <i class="fa fa-copy mr-2"></i>Salin Prompt
+</button>
 </div>
 </div>
 </div>
 </div>
+
+<!-- Langkah 6 : Ekspor -->
+<div class="step hidden" id="s6">
+<h3 class="text-xl font-semibold mb-6">Ekspor & Hasil Video</h3>
 
 <div id="videoResult" class="mt-8 glass rounded-2xl p-6">
     <p class="text-gray-400 text-center">Klik tombol "Generate Video" untuk membuat video UGC otomatis</p>
 </div>
 
-<div class="space-y-3">
+<div class="space-y-3 mt-6">
 <div class="flex justify-between"><span class="text-sm">Skor Viral</span><span class="text-green-400">87/100</span></div>
 <div class="w-full bg-medium-gray rounded-full h-2"><div class="bg-green-400 h-full rounded-full" style="width:87%"></div></div>
 <div class="flex justify-between"><span class="text-sm">Retensi</span><span class="text-blue-400">92/100</span></div>
@@ -125,377 +328,140 @@ tailwind.config={theme:{extend:{colors:{dark:'#0A0A0A',darker:'#050505','dark-gr
 <div class="flex justify-between"><span class="text-sm">Konversi</span><span class="text-red-400">85/100</span></div>
 <div class="w-full bg-medium-gray rounded-full h-2"><div class="bg-red-400 h-full rounded-full" style="width:85%"></div></div>
 </div>
-</div>
-<div class="lg:col-span-2">
+
+<div class="lg:col-span-2 mt-6">
 <div class="glass rounded-xl p-5 mb-6">
 <h4 class="font-medium mb-4">Opsi Ekspor</h4>
 <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-<button class="e-btn glass-light px-4 py-3 rounded-lg text-center"><i class="fa fa-copy text-xl mb-2 block"></i><span class="text-sm">Salin Prompt</span></button>
-<button class="e-btn glass-light px-4 py-3 rounded-lg text-center"><i class="fa fa-file-text-o text-xl mb-2 block"></i><span class="text-sm">Unduh TXT</span></button>
-<button class="e-btn glass-light px-4 py-3 rounded-lg text-center"><i class="fa fa-file-pdf-o text-xl mb-2 block"></i><span class="text-sm">Storyboard PDF</span></button>
-<button class="e-btn glass-light px-4 py-3 rounded-lg text-center"><i class="fa fa-file-video-o text-xl mb-2 block"></i><span class="text-sm">Pratinjau MP4</span></button>
-<button class="e-btn glass-light px-4 py-3 rounded-lg text-center"><i class="fa fa-comment-o text-xl mb-2 block"></i><span class="text-sm">Caption</span></button>
-<button class="e-btn glass-light px-4 py-3 rounded-lg text-center"><i class="fa fa-subtitles text-xl mb-2 block"></i><span class="text-sm">Subtitle</span></button>
+    <button class="e-btn glass-light px-4 py-3 rounded-lg text-center">
+        <i class="fa fa-copy text-xl mb-2 block"></i>
+        <span class="text-sm">Salin Prompt</span>
+    </button>
+    <button class="e-btn glass-light px-4 py-3 rounded-lg text-center">
+        <i class="fa fa-file-text-o text-xl mb-2 block"></i>
+        <span class="text-sm">Unduh TXT</span>
+    </button>
+    <button class="e-btn glass-light px-4 py-3 rounded-lg text-center">
+        <i class="fa fa-file-pdf-o text-xl mb-2 block"></i>
+        <span class="text-sm">Storyboard PDF</span>
+    </button>
+    <button class="e-btn glass-light px-4 py-3 rounded-lg text-center">
+        <i class="fa fa-file-video-o text-xl mb-2 block"></i>
+        <span class="text-sm">Pratinjau MP4</span>
+    </button>
+    <button class="e-btn glass-light px-4 py-3 rounded-lg text-center">
+        <i class="fa fa-comment-o text-xl mb-2 block"></i>
+        <span class="text-sm">Caption</span>
+    </button>
+    <button class="e-btn glass-light px-4 py-3 rounded-lg text-center">
+        <i class="fa fa-subtitles text-xl mb-2 block"></i>
+        <span class="text-sm">Subtitle</span>
+    </button>
 </div>
 </div>
 <div class="glass rounded-xl p-5">
 <h4 class="font-medium mb-4">Aksi Cepat</h4>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-<button class="bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 rounded-lg text-center"><i class="fa fa-rocket text-xl mb-2 block"></i><span class="text-sm">Buat Lebih Viral</span></button>
-<button class="bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-3 rounded-lg text-center"><i class="fa fa-film text-xl mb-2 block"></i><span class="text-sm">Buat Lebih Sinematik</span></button>
-<button class="bg-gradient-to-r from-green-600 to-teal-600 px-4 py-3 rounded-lg text-center"><i class="fa fa-random text-xl mb-2 block"></i><span class="text-sm">Hook Alternatif</span></button>
+    <button class="bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 rounded-lg text-center">
+        <i class="fa fa-rocket text-xl mb-2 block"></i>
+        <span class="text-sm">Buat Lebih Viral</span>
+    </button>
+    <button class="bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-3 rounded-lg text-center">
+        <i class="fa fa-film text-xl mb-2 block"></i>
+        <span class="text-sm">Buat Lebih Sinematik</span>
+    </button>
+    <button class="bg-gradient-to-r from-green-600 to-teal-600 px-4 py-3 rounded-lg text-center">
+        <i class="fa fa-random text-xl mb-2 block"></i>
+        <span class="text-sm">Hook Alternatif</span>
+    </button>
 </div>
 </div>
 </div>
 </div>
-</div>
-</div>
+
 </main>
 
 <div class="glass fixed bottom-0 left-0 right-0 px-4 py-4 z-40">
 <div class="max-w-7xl mx-auto flex justify-between">
-<button id="prev" class="glass-light px-6 py-2 rounded-lg disabled:opacity-50" disabled><i class="fa fa-arrow-left mr-2"></i>Sebelumnya</button>
-<button id="next" class="bg-accent-gold text-dark px-6 py-2 rounded-lg font-medium">Selanjutnya<i class="fa fa-arrow-right ml-2"></i></button>
+<button id="prev" class="glass-light px-6 py-2 rounded-lg disabled:opacity-50" disabled>
+    <i class="fa fa-arrow-left mr-2"></i>Sebelumnya
+</button>
+<button id="next" class="bg-accent-gold text-dark px-6 py-2 rounded-lg font-medium">
+    Selanjutnya<i class="fa fa-arrow-right ml-2"></i>
+</button>
 </div>
 </div>
 
 <script>
-// ==============================================
-// CINEUGC DENGAN INTEGRASI RUNWAY ML GEN-3
-// ==============================================
-const RUNWAY_API_KEY = "key_c66f20e67a491217fef5a3315385e90a858958621f0b7f48cdcde7518607049c64f5307badaacaa821cf85277fe6cb096fec8bf219c812260cf9ab2bf7210d33"; // GANTI DENGAN API KEY ANDA DISINI
+let currentStep = 1;
+const totalStep = 6;
 
-window.onload = function() {
-    // ======================
-    // 1. NAVIGASI LANGKAH
-    // ======================
-    let step = 1;
-    const total = 6;
-    const prev = document.getElementById('prev');
-    const next = document.getElementById('next');
-    const progress = document.getElementById('progress');
+document.addEventListener('DOMContentLoaded', function () {
+    const btnPrev = document.getElementById('prev');
+    const btnNext = document.getElementById('next');
+    const progressBar = document.getElementById('progress');
     const stepNum = document.getElementById('stepNum');
-    let characterBase64 = "";
-    let productBase64 = "";
-    let selectedPersonality = "Natural";
-    let selectedFormat = "Vertikal (9:16)";
-    let selectedAngle = "Dekat";
-    let faceConsistency = 85;
+
+    function initStep() {
+        document.querySelectorAll('.step').forEach(el => {
+            el.classList.add('hidden');
+        });
+        document.getElementById('s1').classList.remove('hidden');
+        updateUI();
+    }
 
     function updateUI() {
-        for(let i=1; i<=total; i++) {
-            document.getElementById('s'+i).style.display = 'none';
-        }
-        document.getElementById('s'+step).style.display = 'block';
-        
-        progress.style.width = (step/total*100)+'%';
-        stepNum.textContent = step;
-        prev.disabled = step === 1;
-        
-        if(step === total) {
-            next.textContent = 'Generate Video';
-            next.onclick = generateVideoWithRunway;
+        let percent = (currentStep / totalStep) * 100;
+        progressBar.style.width = percent + '%';
+        stepNum.innerText = currentStep;
+        btnPrev.disabled = currentStep === 1;
+
+        if (currentStep === totalStep) {
+            btnNext.innerHTML = 'Generate Video <i class="fa fa-video-camera ml-2"></i>';
+            btnNext.onclick = doGenerate;
         } else {
-            next.textContent = 'Selanjutnya →';
-            next.onclick = nextStep;
+            btnNext.innerHTML = 'Selanjutnya <i class="fa fa-arrow-right ml-2"></i>';
+            btnNext.onclick = goNext;
         }
     }
 
-    function nextStep() {
-        if(step < total) {
-            step++;
+    function goNext() {
+        if (currentStep < totalStep) {
+            document.getElementById('s' + currentStep).classList.add('hidden');
+            currentStep++;
+            document.getElementById('s' + currentStep).classList.remove('hidden');
             updateUI();
         }
     }
 
-    prev.onclick = function() {
-        if(step > 1) {
-            step--;
+    function goPrev() {
+        if (currentStep > 1) {
+            document.getElementById('s' + currentStep).classList.add('hidden');
+            currentStep--;
+            document.getElementById('s' + currentStep).classList.remove('hidden');
             updateUI();
         }
     }
 
-    // ======================
-    // 2. UPLOAD GAMBAR
-    // ======================
-    document.getElementById('charUp').onclick = function() {
-        document.getElementById('charFile').click();
-    }
+    btnPrev.onclick = goPrev;
+    btnNext.onclick = goNext;
 
-    document.getElementById('charFile').onchange = function(e) {
-        if(e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                characterBase64 = ev.target.result;
-                document.getElementById('charPreview').innerHTML = 
-                    `<img src="${ev.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
-            }
-            reader.readAsDataURL(e.target.files[0]);
-        }
-    }
-
-    document.getElementById('prodUp').onclick = function() {
-        document.getElementById('prodFile').click();
-    }
-
-    document.getElementById('prodFile').onchange = function(e) {
-        if(e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                productBase64 = ev.target.result;
-                document.getElementById('prodPreview').innerHTML = 
-                    `<img src="${ev.target.result}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
-            }
-            reader.readAsDataURL(e.target.files[0]);
-        }
-    }
-
-    // ======================
-    // 3. TOMBOL PILIHAN
-    // ======================
-    document.querySelectorAll('.p-btn').forEach(btn => {
-        btn.onclick = function() {
-            document.querySelectorAll('.p-btn').forEach(b => b.classList.remove('active', 'bg-accent-gold', 'text-dark'));
-            this.classList.add('active', 'bg-accent-gold', 'text-dark');
-            selectedPersonality = this.textContent.trim();
-        }
-    });
-
-    document.querySelectorAll('.f-card').forEach(btn => {
-        btn.onclick = function() {
-            document.querySelectorAll('.f-card').forEach(b => b.classList.remove('active', 'bg-accent-gold', 'text-dark'));
-            this.classList.add('active', 'bg-accent-gold', 'text-dark');
-            selectedFormat = this.textContent.trim();
-        }
-    });
-
-    document.querySelectorAll('.a-card').forEach(btn => {
-        btn.onclick = function() {
-            document.querySelectorAll('.a-card').forEach(b => b.classList.remove('active', 'bg-accent-gold', 'text-dark'));
-            this.classList.add('active', 'bg-accent-gold', 'text-dark');
-            selectedAngle = this.textContent.trim();
-        }
-    });
-
-    // ======================
-    // 4. SLIDER KONSISTENSI
-    // ======================
-    document.getElementById('idStr').oninput = function() {
-        faceConsistency = this.value;
-        document.getElementById('idVal').textContent = faceConsistency + '%';
-    }
-
-    // ======================
-    // 5. GENERATE VIDEO DENGAN RUNWAY
-    // ======================
-    async function generateVideoWithRunway() {
-        // Validasi
-        if(!characterBase64) {
-            alert('Silakan upload foto karakter terlebih dahulu!');
-            return;
-        }
-
-        next.disabled = true;
-        next.textContent = 'Memulai Generate...';
-        document.getElementById('videoResult').innerHTML = `
-            <div class="text-center py-8">
-                <div class="text-yellow-400 text-xl font-bold mb-4">
-                    <i class="fa fa-spinner fa-spin mr-2"></i> Sedang Membuat Video...
-                </div>
-                <p class="text-gray-400">Proses ini membutuhkan sekitar 30-60 detik. Mohon tunggu.</p>
-                <div id="progressText" class="mt-4 text-sm text-gray-500">Mengirim permintaan ke Runway...</div>
-            </div>
-        `;
-
-        try {
-            // Buat prompt berdasarkan pilihan pengguna
-            const aspectRatio = selectedFormat.includes("Vertikal") ? "9:16" : "16:9";
-            const prompt = `UGC video iklan produk, gaya ${selectedPersonality.toLowerCase()}, sudut pandang ${selectedAngle.toLowerCase()}. Seorang orang sedang mereview produk dengan antusias, menunjukkan produk dengan jelas. Konsistensi wajah ${faceConsistency}%. Pencahayaan alami, resolusi 1080p, 30fps, gerakan halus.`;
-
-            // Kirim permintaan ke API Runway
-            const response = await fetch("https://api.runwayml.com/v1/image_to_video", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${RUNWAY_API_KEY}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    prompt_image: characterBase64.split(',')[1], // Hapus header base64
-                    prompt: prompt,
-                    duration: 4,
-                    aspect_ratio: aspectRatio,
-                    motion_bucket: 127
-                })
-            });
-
-            if(!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || "Gagal mengirim permintaan");
-            }
-
-            const data = await response.json();
-            const taskId = data.id;
-            document.getElementById('progressText').textContent = "Video sedang diproses oleh Runway...";
-
-            // Polling status task sampai selesai
-            let videoUrl = null;
-            let attempts = 0;
-            const maxAttempts = 20; // Maksimal 100 detik (20 x 5 detik)
-
-            while(!videoUrl && attempts < maxAttempts) {
-                attempts++;
-                await new Promise(resolve => setTimeout(resolve, 5000));
-
-                const statusRes = await fetch(`https://api.runwayml.com/v1/tasks/${taskId}`, {
-                    headers: { "Authorization": `Bearer ${RUNWAY_API_KEY}` }
-                });
-
-                const statusData = await statusRes.json();
-
-                if(statusData.status === "succeeded") {
-                    videoUrl = statusData.output[0];
-                    break;
-                } else if(statusData.status === "failed") {
-<script>
-// HANYA GANTI INI SAJA, JANGAN UBAH APAPUN LAIN!
-var step = 1;
-var total = 6;
-var prevBtn;
-var nextBtn;
-var progressBar;
-var stepNum;
-
-window.onload = function() {
-    // Inisialisasi semua elemen
-    prevBtn = document.getElementById('prev');
-    nextBtn = document.getElementById('next');
-    progressBar = document.getElementById('progress');
-    stepNum = document.getElementById('stepNum');
-    
-    // Jalankan update pertama
-    updateStep();
-    
     // Upload Karakter
-    document.getElementById('charUp').onclick = function() {
-        document.getElementById('charFile').click();
-    }
-    
-    document.getElementById('charFile').onchange = function(e) {
-        if (e.target.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(ev) {
-                document.getElementById('charPreview').innerHTML = '<img src="' + ev.target.result + '" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">';
-            }
-            reader.readAsDataURL(e.target.files[0]);
-        }
-    }
-    
-    // Upload Produk
-    document.getElementById('prodUp').onclick = function() {
-        document.getElementById('prodFile').click();
-    }
-    
-    document.getElementById('prodFile').onchange = function(e) {
-        if (e.target.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(ev) {
-                document.getElementById('prodPreview').innerHTML = '<img src="' + ev.target.result + '" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">';
-            }
-            reader.readAsDataURL(e.target.files[0]);
-        }
-    }
-    
-    // Slider Konsistensi
-    document.getElementById('idStr').oninput = function() {
-        document.getElementById('idVal').textContent = this.value + '%';
-    }
-    
-    // Semua tombol pilihan
-    var buttons = document.querySelectorAll('button');
-    for (var i = 0; i < buttons.length; i++) {
-        buttons[i].onclick = function() {
-            if (this.classList.contains('p-btn') || this.classList.contains('pr-btn') || 
-                this.classList.contains('f-card') || this.classList.contains('a-card') || 
-                this.classList.contains('prm-btn')) {
-                
-                var parent = this.parentElement;
-                var siblings = parent.querySelectorAll('button');
-                
-                for (var j = 0; j < siblings.length; j++) {
-                    siblings[j].classList.remove('active', 'bg-accent-gold', 'text-dark');
-                }
-                
-                this.classList.add('active', 'bg-accent-gold', 'text-dark');
-            }
-        }
-    }
-}
-
-function updateStep() {
-    // Sembunyikan semua langkah
-    for (var i = 1; i <= total; i++) {
-        document.getElementById('s' + i).style.display = 'none';
-    }
-    
-    // Tampilkan langkah sekarang
-    document.getElementById('s' + step).style.display = 'block';
-    
-    // Update progress
-    progressBar.style.width = (step / total * 100) + '%';
-    stepNum.textContent = step;
-    
-    // Update tombol
-    prevBtn.disabled = step === 1;
-    
-    if (step === total) {
-        nextBtn.textContent = 'Generate Video';
-        nextBtn.onclick = generateVideo;
-    } else {
-        nextBtn.textContent = 'Selanjutnya →';
-        nextBtn.onclick = nextStep;
-    }
-}
-
-function nextStep() {
-    if (step < total) {
-        step++;
-        updateStep();
-    }
-}
-
-function prevStep() {
-    if (step > 1) {
-        step--;
-        updateStep();
-    }
-}
-
-function generateVideo() {
-    nextBtn.disabled = true;
-    nextBtn.textContent = 'Memproses...';
-    
-    setTimeout(function() {
-        document.getElementById('videoResult').innerHTML = `
-            <div class="text-center py-4">
-                <div class="text-green-400 text-lg font-bold mb-4">✅ Prompt Siap!</div>
-                <button onclick="copyPrompt()" class="bg-yellow-500 text-black px-6 py-3 rounded-xl font-bold mr-3 mb-3">
-                    📋 Salin Prompt
-                </button>
-                <a href="https://seedance.ai/" target="_blank" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold inline-block">
-                    🔗 Buka Seedance
-                </a>
-            </div>
-        `;
-        nextBtn.disabled = false;
-        nextBtn.textContent = 'Generate Video';
-    }, 2000);
-}
-
-function copyPrompt() {
-    navigator.clipboard.writeText(
-        "Video UGC iklan produk sinematik. Seorang orang mereview produk dengan antusias, menunjukkan produk dengan jelas. Format vertikal 9:16, pencahayaan alami, resolusi 1080p."
-    ).then(function() {
-        alert('Prompt berhasil disalin!');
+    const charUp = document.getElementById('charUp');
+    const charFile = document.getElementById('charFile');
+    const charPreview = document.getElementById('charPreview');
+    charUp.addEventListener('click', () => charFile.click());
+    charFile.addEventListener('change', function (e) {
+        let file = e.target.files[0];
+        if (!file) return;
+        let reader = new FileReader();
+        reader.onload = function (ev) {
+            charPreview.innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover rounded-xl">`;
+        };
+        reader.readAsDataURL(file);
     });
-}
-</script>
+
+    // Upload Produk
+    const prodUp = document.getElementById('prodUp');
+    const prodFile = document.getElementById('prodFile');
+    const prodPreview = document.getElementById('prodPreview'
