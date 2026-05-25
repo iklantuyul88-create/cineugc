@@ -6,7 +6,6 @@
 <title>CineUGC</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 <script>
 tailwind.config={
     theme:{
@@ -19,38 +18,15 @@ tailwind.config={
                 'light-gray':'#2A2A2A',
                 'accent-gold':'#D4AF37'
             },
-            fontFamily:{inter:['Inter','system-ui']},
-            animation:{
-                'fade-in':'fadeIn 0.5s ease-in',
-                'slide-up':'slideUp 0.4s ease-out'
-            },
-            keyframes:{
-                fadeIn:{'0%':{opacity:'0'},'100%':{opacity:'1'}},
-                slideUp:{'0%':{transform:'translateY(20px)',opacity:'0'},'100%':{transform:'translateY(0)',opacity:'1'}}
-            }
+            fontFamily:{inter:['Inter','system-ui']}
         }
     }
 }
 </script>
-<style type="text/tailwindcss">
-@layer utilities{
-    .glass{
-        background:rgba(30,30,30,0.7);
-        backdrop-filter:blur(20px);
-        border:1px solid rgba(255,255,255,0.1)
-    }
-    .glass-light{
-        background:rgba(42,42,42,0.6);
-        backdrop-filter:blur(10px);
-        border:1px solid rgba(255,255,255,0.08)
-    }
-    .text-gradient{
-        background:linear-gradient(135deg,#fff 0%,#d4af37 100%);
-        -webkit-background-clip:text;
-        -webkit-text-fill-color:transparent
-    }
-    .scrollbar-hide::-webkit-scrollbar{display:none}
-}
+<style>
+.glass{background:rgba(30,30,30,0.7);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1)}
+.glass-light{background:rgba(42,42,42,0.6);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08)}
+.hidden{display:none !important;}
 </style>
 </head>
 <body class="bg-dark text-white font-inter min-h-screen">
@@ -58,12 +34,7 @@ tailwind.config={
 <div class="max-w-7xl mx-auto flex justify-between items-center">
 <div class="flex items-center space-x-2">
     <i class="fa fa-film text-accent-gold"></i>
-    <h1 class="text-xl font-bold text-gradient">CineUGC</h1>
-</div>
-<div class="hidden md:flex space-x-6">
-    <a href="#" class="text-gray-300 hover:text-white">Dashboard</a>
-    <a href="#" class="text-gray-300 hover:text-white">Proyek</a>
-    <a href="#" class="text-gray-300 hover:text-white">Template</a>
+    <h1 class="text-xl font-bold">CineUGC</h1>
 </div>
 <button class="glass-light px-4 py-2 rounded-lg">
     <i class="fa fa-user-circle mr-2"></i>Akun
@@ -71,319 +42,53 @@ tailwind.config={
 </div>
 </nav>
 
-<main class="pt-20 pb-24 px-4 max-w-7xl mx-auto">
-<div class="mb-8 animate-fade-in">
+<main class="pt-20 pb-28 px-4 max-w-7xl mx-auto">
+<div class="mb-8">
 <div class="flex justify-between mb-2">
     <h2 class="text-2xl font-bold">Buat Iklan UGC Sinematik</h2>
     <span class="text-gray-400">Langkah <span id="stepNum">1</span>/6</span>
 </div>
 <div class="w-full bg-medium-gray rounded-full h-2">
-    <div id="progress" class="bg-accent-gold h-full rounded-full transition-all duration-500" style="width:16.66%"></div>
-</div>
-<div class="flex justify-between mt-2 text-xs text-gray-500">
-    <span class="text-accent-gold">Karakter</span>
-    <span>Produk</span>
-    <span>Format</span>
-    <span>Sudut</span>
-    <span>Storyboard</span>
-    <span>Ekspor</span>
+    <div id="progress" class="bg-accent-gold h-full rounded-full transition-all" style="width:16.66%"></div>
 </div>
 </div>
 
-<!-- Langkah 1 : Karakter -->
 <div class="step" id="s1">
     <h3 class="text-xl font-semibold mb-6">Tambahkan Karakter</h3>
-    <div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 hover:border-accent-gold cursor-pointer" id="charUp">
+    <div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 cursor-pointer" id="charUp">
         <input type="file" id="charFile" accept="image/*" class="hidden">
         <div id="charPreview" class="w-full h-full flex items-center justify-center">
             <div class="text-center">
                 <i class="fa fa-user-circle text-5xl text-gray-500 mb-4"></i>
-                <p class="text-gray-400 text-center">Seret foto atau klik</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="glass rounded-2xl p-6 mt-6">
-        <h4 class="font-medium mb-4">Pengaturan</h4>
-        <div class="mb-6">
-            <label class="block text-sm text-gray-400 mb-2">Konsistensi Wajah</label>
-            <input type="range" min="0" max="100" value="85" class="w-full accent-accent-gold" id="idStr">
-            <div class="flex justify-between text-xs text-gray-500 mt-1">
-                <span>Fleksibel</span>
-                <span id="idVal">85%</span>
-                <span>Konsisten</span>
-            </div>
-        </div>
-        <div class="mb-6">
-            <label class="block text-sm text-gray-400 mb-2">Kepribadian</label>
-            <div class="grid grid-cols-2 gap-2">
-                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm active">Mewah</button>
-                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Lucu</button>
-                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Petualang</button>
-                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Dokumenter</button>
-                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Reviewer</button>
-                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Lembut</button>
-                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Energi</button>
-                <button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Minimalis</button>
+                <p class="text-gray-400">Seret foto atau klik</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Langkah 2 : Produk -->
 <div class="step hidden" id="s2">
     <h3 class="text-xl font-semibold mb-6">Tambahkan Produk</h3>
-    <div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 hover:border-accent-gold cursor-pointer" id="prodUp">
+    <div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 cursor-pointer" id="prodUp">
         <input type="file" id="prodFile" accept="image/*" class="hidden">
         <div id="prodPreview" class="w-full h-full flex items-center justify-center">
             <div class="text-center">
                 <i class="fa fa-box text-5xl text-gray-500 mb-4"></i>
-                <p class="text-gray-400 text-center">Seret foto atau klik</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="glass rounded-2xl p-6 mt-6">
-        <h4 class="font-medium mb-4">Pengaturan</h4>
-        <div class="mb-4">
-            <label class="block text-sm text-gray-400 mb-2">Kategori</label>
-            <select class="w-full bg-medium-gray border border-gray-600 rounded-lg px-4 py-2">
-                <option>Elektronik</option>
-                <option>Kosmetik</option>
-                <option>Fashion</option>
-                <option>Makanan</option>
-            </select>
-        </div>
-        <div class="mb-4">
-            <label class="block text-sm text-gray-400 mb-2">Prioritas</label>
-            <div class="flex space-x-2">
-                <button class="pr-btn w-full py-2 rounded-lg bg-accent-gold text-dark">1</button>
-                <button class="pr-btn w-full py-2 rounded-lg glass-light">2</button>
-                <button class="pr-btn w-full py-2 rounded-lg glass-light">3</button>
-                <button class="pr-btn w-full py-2 rounded-lg glass-light">4</button>
-                <button class="pr-btn w-full py-2 rounded-lg glass-light">5</button>
+                <p class="text-gray-400">Seret foto atau klik</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Langkah 3 : Format -->
-<div class="step hidden" id="s3">
-<h3 class="text-xl font-semibold mb-6">Pilih Format</h3>
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent active">
-    <div class="w-16 h-28 bg-medium-gray rounded mx-auto mb-3"></div>
-    <h4 class="font-medium">9:16</h4>
-    <p class="text-xs text-gray-400">TikTok</p>
-</div>
-<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent">
-    <div class="w-28 h-16 bg-medium-gray rounded mx-auto mb-3"></div>
-    <h4 class="font-medium">16:9</h4>
-    <p class="text-xs text-gray-400">YouTube</p>
-</div>
-<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent">
-    <div class="w-20 h-20 bg-medium-gray rounded mx-auto mb-3"></div>
-    <h4 class="font-medium">1:1</h4>
-    <p class="text-xs text-gray-400">Instagram</p>
-</div>
-<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent">
-    <div class="w-20 h-25 bg-medium-gray rounded mx-auto mb-3"></div>
-    <h4 class="font-medium">4:5</h4>
-    <p class="text-xs text-gray-400">Iklan</p>
-</div>
-<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent">
-    <div class="w-32 h-18 bg-medium-gray rounded mx-auto mb-3"></div>
-    <h4 class="font-medium">2.39:1</h4>
-    <p class="text-xs text-gray-400">Sinematik</p>
-</div>
-<div class="f-card glass rounded-xl p-4 text-center cursor-pointer border border-transparent">
-    <div class="w-20 h-20 bg-medium-gray rounded mx-auto mb-3 flex items-center justify-center">
-        <i class="fa fa-cog text-gray-400"></i>
-    </div>
-    <h4 class="font-medium">Kustom</h4>
-</div>
-</div>
-</div>
-
-<!-- Langkah 4 : Sudut Iklan -->
-<div class="step hidden" id="s4">
-<h3 class="text-xl font-semibold mb-6">Pilih Sudut Iklan</h3>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent active">
-    <div class="flex items-center mb-3">
-        <i class="fa fa-heart text-accent-gold mr-3"></i>
-        <h4 class="font-medium">Cerita Emosional</h4>
-    </div>
-    <p class="text-sm text-gray-400">Membangun koneksi emosional dengan penonton.</p>
-</div>
-<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent">
-    <div class="flex items-center mb-3">
-        <i class="fa fa-wrench text-accent-gold mr-3"></i>
-        <h4 class="font-medium">Pemecahan Masalah</h4>
-    </div>
-    <p class="text-sm text-gray-400">Menunjukkan bagaimana produk menyelesaikan masalah.</p>
-</div>
-<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent">
-    <div class="flex items-center mb-3">
-        <i class="fa fa-diamond text-accent-gold mr-3"></i>
-        <h4 class="font-medium">Estetika Mewah</h4>
-    </div>
-    <p class="text-sm text-gray-400">Gaya eksklusif untuk audiens premium.</p>
-</div>
-<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent">
-    <div class="flex items-center mb-3">
-        <i class="fa fa-bolt text-accent-gold mr-3"></i>
-        <h4 class="font-medium">TikTok Viral</h4>
-    </div>
-    <p class="text-sm text-gray-400">Pacing cepat dan hook yang kuat.</p>
-</div>
-<div class="a-card glass rounded-xl p-5 cursor-pointer border border-transparent">
-    <div class="flex items-center mb-3">
-        <i class="fa fa-film text-accent-gold mr-3"></i>
-        <h4 class="font-medium">Iklan Sinematik</h4>
-    </div>
-    <p class="text-sm text-gray-400">Kualitas produksi tinggi profesional.</p>
-</div>
-</div>
-</div>
-
-<!-- Langkah 5 : Storyboard & Prompt -->
-<div class="step hidden" id="s5">
-<h3 class="text-xl font-semibold mb-6">Storyboard & Prompt</h3>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-<div class="lg:col-span-2">
-<div class="glass rounded-xl p-5 mb-6">
-<div class="flex justify-between mb-4">
-    <h4 class="font-medium">Storyboard</h4>
-    <button class="text-accent-gold text-sm">
-        <i class="fa fa-refresh mr-1"></i>Regenerasi
-    </button>
-</div>
-<div class="space-y-4">
-<div class="glass-light rounded-lg p-4">
-    <div class="flex items-center mb-2">
-        <span class="bg-accent-gold text-dark text-xs font-bold px-2 py-1 rounded mr-2">0-3s</span>
-        <h5 class="font-medium">Hook: Masalah</h5>
-    </div>
-    <p class="text-sm text-gray-400">Karakter tampak frustrasi dengan masalah yang dipecahkan produk.</p>
-</div>
-<div class="glass-light rounded-lg p-4">
-    <div class="flex items-center mb-2">
-        <span class="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded mr-2">3-12s</span>
-        <h5 class="font-medium">Solusi</h5>
-    </div>
-    <p class="text-sm text-gray-400">Karakter menemukan produk dan menunjukkan cara kerjanya.</p>
-</div>
-<div class="glass-light rounded-lg p-4">
-    <div class="flex items-center mb-2">
-        <span class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded mr-2">12-22s</span>
-        <h5 class="font-medium">Hasil</h5>
-    </div>
-    <p class="text-sm text-gray-400">Karakter menunjukkan hasil yang memuaskan.</p>
-</div>
-<div class="glass-light rounded-lg p-4">
-    <div class="flex items-center mb-2">
-        <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded mr-2">22-30s</span>
-        <h5 class="font-medium">CTA</h5>
-    </div>
-    <p class="text-sm text-gray-400">Karakter mengajak penonton untuk membeli.</p>
-</div>
-</div>
-</div>
-</div>
-<div>
-<div class="glass rounded-xl p-5 mb-6">
-<h4 class="font-medium mb-4">Prompt AI</h4>
-<div class="space-y-3">
-    <button class="prm-btn w-full glass-light px-4 py-3 rounded-lg text-left active">Seedance 2.0</button>
-    <button class="prm-btn w-full glass-light px-4 py-3 rounded-lg text-left">Runway</button>
-    <button class="prm-btn w-full glass-light px-4 py-3 rounded-lg text-left">Sora</button>
-</div>
-</div>
-<div class="glass rounded-xl p-5">
-<div class="bg-darker rounded-lg p-4 mb-4 max-h-40 overflow-y-auto scrollbar-hide">
-    <p class="text-xs text-gray-300">Cinematic UGC advertisement, 9:16, 30 seconds. Character with consistent face from reference. Shot on ARRI Alexa LF, natural lighting, 4K resolution, realistic skin texture.</p>
-</div>
-<button class="w-full bg-accent-gold text-dark font-medium py-2 rounded-lg">
-    <i class="fa fa-copy mr-2"></i>Salin Prompt
-</button>
-</div>
-</div>
-</div>
-</div>
-
-<!-- Langkah 6 : Ekspor -->
-<div class="step hidden" id="s6">
-<h3 class="text-xl font-semibold mb-6">Ekspor & Hasil Video</h3>
-
-<div id="videoResult" class="mt-8 glass rounded-2xl p-6">
-    <p class="text-gray-400 text-center">Klik tombol "Generate Video" untuk membuat video UGC otomatis</p>
-</div>
-
-<div class="space-y-3 mt-6">
-<div class="flex justify-between"><span class="text-sm">Skor Viral</span><span class="text-green-400">87/100</span></div>
-<div class="w-full bg-medium-gray rounded-full h-2"><div class="bg-green-400 h-full rounded-full" style="width:87%"></div></div>
-<div class="flex justify-between"><span class="text-sm">Retensi</span><span class="text-blue-400">92/100</span></div>
-<div class="w-full bg-medium-gray rounded-full h-2"><div class="bg-blue-400 h-full rounded-full" style="width:92%"></div></div>
-<div class="flex justify-between"><span class="text-sm">Konversi</span><span class="text-red-400">85/100</span></div>
-<div class="w-full bg-medium-gray rounded-full h-2"><div class="bg-red-400 h-full rounded-full" style="width:85%"></div></div>
-</div>
-
-<div class="lg:col-span-2 mt-6">
-<div class="glass rounded-xl p-5 mb-6">
-<h4 class="font-medium mb-4">Opsi Ekspor</h4>
-<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-    <button class="e-btn glass-light px-4 py-3 rounded-lg text-center">
-        <i class="fa fa-copy text-xl mb-2 block"></i>
-        <span class="text-sm">Salin Prompt</span>
-    </button>
-    <button class="e-btn glass-light px-4 py-3 rounded-lg text-center">
-        <i class="fa fa-file-text-o text-xl mb-2 block"></i>
-        <span class="text-sm">Unduh TXT</span>
-    </button>
-    <button class="e-btn glass-light px-4 py-3 rounded-lg text-center">
-        <i class="fa fa-file-pdf-o text-xl mb-2 block"></i>
-        <span class="text-sm">Storyboard PDF</span>
-    </button>
-    <button class="e-btn glass-light px-4 py-3 rounded-lg text-center">
-        <i class="fa fa-file-video-o text-xl mb-2 block"></i>
-        <span class="text-sm">Pratinjau MP4</span>
-    </button>
-    <button class="e-btn glass-light px-4 py-3 rounded-lg text-center">
-        <i class="fa fa-comment-o text-xl mb-2 block"></i>
-        <span class="text-sm">Caption</span>
-    </button>
-    <button class="e-btn glass-light px-4 py-3 rounded-lg text-center">
-        <i class="fa fa-subtitles text-xl mb-2 block"></i>
-        <span class="text-sm">Subtitle</span>
-    </button>
-</div>
-</div>
-<div class="glass rounded-xl p-5">
-<h4 class="font-medium mb-4">Aksi Cepat</h4>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-    <button class="bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 rounded-lg text-center">
-        <i class="fa fa-rocket text-xl mb-2 block"></i>
-        <span class="text-sm">Buat Lebih Viral</span>
-    </button>
-    <button class="bg-gradient-to-r from-blue-600 to-cyan-600 px-4 py-3 rounded-lg text-center">
-        <i class="fa fa-film text-xl mb-2 block"></i>
-        <span class="text-sm">Buat Lebih Sinematik</span>
-    </button>
-    <button class="bg-gradient-to-r from-green-600 to-teal-600 px-4 py-3 rounded-lg text-center">
-        <i class="fa fa-random text-xl mb-2 block"></i>
-        <span class="text-sm">Hook Alternatif</span>
-    </button>
-</div>
-</div>
-</div>
-</div>
+<div class="step hidden" id="s3"><h3>Langkah 3 Format</h3></div>
+<div class="step hidden" id="s4"><h3>Langkah 4 Sudut</h3></div>
+<div class="step hidden" id="s5"><h3>Langkah 5 Storyboard</h3></div>
+<div class="step hidden" id="s6"><h3>Langkah 6 Ekspor</h3></div>
 
 </main>
 
 <div class="glass fixed bottom-0 left-0 right-0 px-4 py-4 z-40">
 <div class="max-w-7xl mx-auto flex justify-between">
-<button id="prev" class="glass-light px-6 py-2 rounded-lg disabled:opacity-50" disabled>
+<button id="prev" class="glass-light px-6 py-2 rounded-lg" disabled>
     <i class="fa fa-arrow-left mr-2"></i>Sebelumnya
 </button>
 <button id="next" class="bg-accent-gold text-dark px-6 py-2 rounded-lg font-medium">
@@ -393,75 +98,53 @@ tailwind.config={
 </div>
 
 <script>
-let currentStep = 1;
-const totalStep = 6;
+let current = 1;
+const total = 6;
 
-document.addEventListener('DOMContentLoaded', function () {
-    const btnPrev = document.getElementById('prev');
-    const btnNext = document.getElementById('next');
-    const progressBar = document.getElementById('progress');
-    const stepNum = document.getElementById('stepNum');
+const prev = document.getElementById('prev');
+const next = document.getElementById('next');
+const progress = document.getElementById('progress');
+const stepNum = document.getElementById('stepNum');
 
-    function initStep() {
-        document.querySelectorAll('.step').forEach(el => {
-            el.classList.add('hidden');
-        });
-        document.getElementById('s1').classList.remove('hidden');
-        updateUI();
+function update(){
+    document.querySelectorAll('.step').forEach(s=>s.classList.add('hidden'));
+    document.getElementById('s'+current).classList.remove('hidden');
+    progress.style.width = (current/total)*100+'%';
+    stepNum.innerText = current;
+    prev.disabled = current===1;
+
+    if(current===total){
+        next.innerText = 'Generate Video';
+    }else{
+        next.innerText = 'Selanjutnya →';
     }
+}
 
-    function updateUI() {
-        let percent = (currentStep / totalStep) * 100;
-        progressBar.style.width = percent + '%';
-        stepNum.innerText = currentStep;
-        btnPrev.disabled = currentStep === 1;
+prev.onclick = ()=>{ if(current>1){current--;update();} };
+next.onclick = ()=>{ if(current<total){current++;update();} };
 
-        if (currentStep === totalStep) {
-            btnNext.innerHTML = 'Generate Video <i class="fa fa-video-camera ml-2"></i>';
-            btnNext.onclick = doGenerate;
-        } else {
-            btnNext.innerHTML = 'Selanjutnya <i class="fa fa-arrow-right ml-2"></i>';
-            btnNext.onclick = goNext;
-        }
+// UPLOAD KARAKTER 100% WORK HP
+document.getElementById('charUp').onclick = ()=> document.getElementById('charFile').click();
+document.getElementById('charFile').onchange = function(e){
+    const reader = new FileReader();
+    reader.onload = ev=>{
+        document.getElementById('charPreview').innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`;
     }
+    reader.readAsDataURL(e.target.files[0]);
+}
 
-    function goNext() {
-        if (currentStep < totalStep) {
-            document.getElementById('s' + currentStep).classList.add('hidden');
-            currentStep++;
-            document.getElementById('s' + currentStep).classList.remove('hidden');
-            updateUI();
-        }
+// UPLOAD PRODUK 100% WORK HP
+document.getElementById('prodUp').onclick = ()=> document.getElementById('prodFile').click();
+document.getElementById('prodFile').onchange = function(e){
+    const reader = new FileReader();
+    reader.onload = ev=>{
+        document.getElementById('prodPreview').innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`;
     }
+    reader.readAsDataURL(e.target.files[0]);
+}
 
-    function goPrev() {
-        if (currentStep > 1) {
-            document.getElementById('s' + currentStep).classList.add('hidden');
-            currentStep--;
-            document.getElementById('s' + currentStep).classList.remove('hidden');
-            updateUI();
-        }
-    }
+update();
+</script>
 
-    btnPrev.onclick = goPrev;
-    btnNext.onclick = goNext;
-
-    // Upload Karakter
-    const charUp = document.getElementById('charUp');
-    const charFile = document.getElementById('charFile');
-    const charPreview = document.getElementById('charPreview');
-    charUp.addEventListener('click', () => charFile.click());
-    charFile.addEventListener('change', function (e) {
-        let file = e.target.files[0];
-        if (!file) return;
-        let reader = new FileReader();
-        reader.onload = function (ev) {
-            charPreview.innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover rounded-xl">`;
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // Upload Produk
-    const prodUp = document.getElementById('prodUp');
-    const prodFile = document.getElementById('prodFile');
-    const prodPreview = document.getElementById('prodPreview'
+</body>
+</html>
