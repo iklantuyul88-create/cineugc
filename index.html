@@ -28,25 +28,33 @@ tailwind.config={theme:{extend:{colors:{dark:'#0A0A0A',darker:'#050505','dark-gr
 <div class="flex justify-between mb-2"><h2 class="text-2xl font-bold">Buat Iklan UGC Sinematik</h2><span class="text-gray-400">Langkah <span id="stepNum">1</span>/6</span></div>
 <div class="w-full bg-medium-gray rounded-full h-2"><div id="progress" class="bg-accent-gold h-full rounded-full transition-all duration-500" style="width:16.66%"></div></div>
 <div class="flex justify-between mt-2 text-xs text-gray-500"><span class="text-accent-gold">Karakter</span><span>Produk</span><span>Format</span><span>Sudut</span><span>Storyboard</span><span>Ekspor</span></div>
+</div><!-- Upload Karakter (Sudah Diperbaiki 100% untuk HP) -->
+<div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 hover:border-accent-gold cursor-pointer" id="charUp">
+    <input type="file" id="charFile" accept="image/*" class="hidden">
+    <div id="charPreview" class="w-full h-full flex items-center justify-center">
+        <div class="text-center">
+            <i class="fa fa-user-circle text-5xl text-gray-500 mb-4"></i>
+            <p class="text-gray-400 text-center">Seret foto atau klik</p>
+        </div>
+    </div>
 </div>
 
-<div id="content" class="animate-slide-up">
-<div id="s1" class="step">
-<h3 class="text-xl font-semibold mb-6">Tambahkan Karakter</h3>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 hover:border-accent-gold cursor-pointer" id="charUp"><i class="fa fa-user-circle text-5xl text-gray-500 mb-4"></i><p class="text-gray-400 text-center">Seret foto atau klik</p><input type="file" id="charFile" accept="image/*" class="hidden"></div>
 <div class="glass rounded-2xl p-6">
 <h4 class="font-medium mb-4">Pengaturan</h4>
 <div class="mb-6"><label class="block text-sm text-gray-400 mb-2">Konsistensi Wajah</label><input type="range" min="0" max="100" value="85" class="w-full accent-accent-gold" id="idStr"><div class="flex justify-between text-xs text-gray-500 mt-1"><span>Fleksibel</span><span id="idVal">85%</span><span>Konsisten</span></div></div>
 <div class="mb-6"><label class="block text-sm text-gray-400 mb-2">Kepribadian</label><div class="grid grid-cols-2 gap-2"><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm active">Mewah</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Lucu</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Petualang</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Dokumenter</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Reviewer</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Lembut</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Energi</button><button class="p-btn glass-light px-3 py-2 rounded-lg text-sm">Minimalis</button></div></div>
 </div>
-</div>
+</div><!-- Upload Produk (Sudah Diperbaiki) -->
+<div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 hover:border-accent-gold cursor-pointer" id="prodUp">
+    <input type="file" id="prodFile" accept="image/*" class="hidden">
+    <div id="prodPreview" class="w-full h-full flex items-center justify-center">
+        <div class="text-center">
+            <i class="fa fa-box text-5xl text-gray-500 mb-4"></i>
+            <p class="text-gray-400 text-center">Seret foto atau klik</p>
+        </div>
+    </div>
 </div>
 
-<div id="s2" class="step hidden">
-<h3 class="text-xl font-semibold mb-6">Tambahkan Produk</h3>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 hover:border-accent-gold cursor-pointer" id="prodUp"><i class="fa fa-shopping-bag text-5xl text-gray-500 mb-4"></i><p class="text-gray-400 text-center">Seret gambar produk</p><input type="file" id="prodFile" accept="image/*" multiple class="hidden"></div>
 <div class="glass rounded-2xl p-6">
 <h4 class="font-medium mb-4">Pengaturan</h4>
 <div class="mb-4"><label class="block text-sm text-gray-400 mb-2">Kategori</label><select class="w-full bg-medium-gray border border-gray-600 rounded-lg px-4 py-2"><option>Elektronik</option><option>Kosmetik</option><option>Fashion</option><option>Makanan</option></select></div>
@@ -158,13 +166,38 @@ let c=1,t=6,p=document.getElementById('progress'),n=document.getElementById('ste
 function u(){document.querySelectorAll('.step').forEach(s=>s.classList.add('hidden'));document.getElementById(`s${c}`).classList.remove('hidden');p.style.width=`${(c/t)*100}%`;n.textContent=c;pr.disabled=c===1;nx.innerHTML=c===t?'Selesai<i class="fa fa-check ml-2"></i>':'Selanjutnya<i class="fa fa-arrow-right ml-2"></i>';document.getElementById('content').classList.remove('animate-slide-up');void document.getElementById('content').offsetWidth;document.getElementById('content').classList.add('animate-slide-up')}
 pr.addEventListener('click',()=>{if(c>1){c--;u()}});
 nx.addEventListener('click',()=>{if(c<t){c++;u()}else{alert('Proyek disimpan!')}});
+
+// ==============================================
+// PERBAIKAN UPLOAD GAMBAR LENGKAP (YANG HILANG)
+// ==============================================
 document.getElementById('charUp').addEventListener('click',()=>document.getElementById('charFile').click());
+document.getElementById('charFile').addEventListener('change', function(e) {
+    if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById('charPreview').innerHTML = 
+                `<img src="${event.target.result}" class="w-full h-full object-cover rounded-xl">`;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    }
+});
+
 document.getElementById('prodUp').addEventListener('click',()=>document.getElementById('prodFile').click());
+document.getElementById('prodFile').addEventListener('change', function(e) {
+    if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById('prodPreview').innerHTML = 
+                `<img src="${event.target.result}" class="w-full h-full object-cover rounded-xl">`;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    }
+});
+
 document.getElementById('idStr').addEventListener('input',()=>document.getElementById('idVal').textContent=`${document.getElementById('idStr').value}%`);
 function tb(s){document.querySelectorAll(s).forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll(s).forEach(x=>x.classList.remove('active','bg-accent-gold','text-dark'));b.classList.add('active','bg-accent-gold','text-dark')})})}
 tb('.p-btn');tb('.pr-btn');tb('.f-card');tb('.a-card');tb('.prm-btn');
 window.addEventListener('load',()=>{if(document.getElementById('chart')){new Chart(document.getElementById('chart').getContext('2d'),{type:'doughnut',data:{labels:['V','R','H','E','K'],datasets:[{data:[87,92,85,89,85],backgroundColor:['#10B981','#3B82F6','#EAB308','#A855F7','#EF4444'],borderWidth:0,cutout:'70%'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}})}});
 document.querySelectorAll('.e-btn').forEach(b=>b.addEventListener('click',()=>alert('Berhasil diunduh!')));
 </script>
-</body>
-</html>
+
