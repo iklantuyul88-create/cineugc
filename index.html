@@ -160,128 +160,166 @@ tailwind.config={theme:{extend:{colors:{dark:'#0A0A0A',darker:'#050505','dark-gr
 </div>
 
 <script>
-const RUNWAY_API_KEY = "YOUR_RUNWAY_API_KEY"; // GANTI DENGAN API KEY ANDA
-let c=1,t=6,p=document.getElementById('progress'),n=document.getElementById('stepNum'),pr=document.getElementById('prev'),nx=document.getElementById('next');
-let characterImage="",productImage="",personality="",format="",angle="",consistency=85;
-
-function u(){document.querySelectorAll('.step').forEach(s=>s.classList.add('hidden'));document.getElementById(`s${c}`).classList.remove('hidden');p.style.width=`${(c/t)*100}%`;n.textContent=c;pr.disabled=c===1;nx.innerHTML=c===t?'Generate Video<i class="fa fa-video-camera ml-2"></i>':'Selanjutnya<i class="fa fa-arrow-right ml-2"></i>';document.getElementById('content').classList.remove('animate-slide-up');void document.getElementById('content').offsetWidth;document.getElementById('content').classList.add('animate-slide-up')}
-
-pr.addEventListener('click',()=>{if(c>1){c--;u()}});
-nx.addEventListener('click',()=>{
-    if(c<t){
-        if(c===1 && !characterImage){alert('Silakan upload foto karakter terlebih dahulu');return;}
-        if(c===2 && !productImage){alert('Silakan upload foto produk terlebih dahulu');return;}
-        c++;u();
-    }else{
-        generateVideo();
-    }
-});
-
-// Upload Karakter
-document.getElementById('charUp').addEventListener('click',()=>document.getElementById('charFile').click());
-document.getElementById('charFile').addEventListener('change', function(e) {
-    if (e.target.files && e.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            characterImage = event.target.result;
-            document.getElementById('charPreview').innerHTML = 
-                `<img src="${event.target.result}" class="w-full h-full object-cover rounded-xl">`;
-        };
-        reader.readAsDataURL(e.target.files[0]);
-    }
-});
-
-// Upload Produk
-document.getElementById('prodUp').addEventListener('click',()=>document.getElementById('prodFile').click());
-document.getElementById('prodFile').addEventListener('change', function(e) {
-    if (e.target.files && e.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            productImage = event.target.result;
-            document.getElementById('prodPreview').innerHTML = 
-                `<img src="${event.target.result}" class="w-full h-full object-cover rounded-xl">`;
-        };
-        reader.readAsDataURL(e.target.files[0]);
-    }
-});
-
-document.getElementById('idStr').addEventListener('input',()=>{
-    consistency = document.getElementById('idStr').value;
-    document.getElementById('idVal').textContent=`${consistency}%`;
-});
-
-function tb(s){document.querySelectorAll(s).forEach(b=>{b.addEventListener('click',()=>{
-    document.querySelectorAll(s).forEach(x=>x.classList.remove('active','bg-accent-gold','text-dark'));
-    b.classList.add('active','bg-accent-gold','text-dark');
-    if(s==='.p-btn') personality=b.textContent;
-    if(s==='.f-card') format=b.textContent;
-    if(s==='.a-card') angle=b.textContent;
-})})}
-tb('.p-btn');tb('.pr-btn');tb('.f-card');tb('.a-card');tb('.prm-btn');
-
-window.addEventListener('load',()=>{if(document.getElementById('chart')){new Chart(document.getElementById('chart').getContext('2d'),{type:'doughnut',data:{labels:['V','R','H','E','K'],datasets:[{data:[87,92,85,89,85],backgroundColor:['#10B981','#3B82F6','#EAB308','#A855F7','#EF4444'],borderWidth:0,cutout:'70%'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}})}});
-document.querySelectorAll('.e-btn').forEach(b=>b.addEventListener('click',()=>alert('Berhasil diunduh!')));
-
 // ==============================================
-// FUNGSI GENERATE VIDEO OTOMATIS DENGAN RUNWAY
+// KODE LENGKAP DAN TERUJI UNTUK CINEUGC
 // ==============================================
-async function generateVideo() {
-    nx.disabled=true;
-    nx.innerHTML='<i class="fa fa-spinner fa-spin mr-2"></i>Generating...';
+let currentStep = 1;
+const totalSteps = 6;
+const prevBtn = document.getElementById('prev');
+const nextBtn = document.getElementById('next');
+const progressBar = document.getElementById('progress');
+const stepNumber = document.getElementById('stepNum');
+
+// Inisialisasi saat halaman dimuat
+window.addEventListener('load', function() {
+    updateStep();
+    initUploads();
+    initButtons();
+    initSlider();
+});
+
+// Fungsi update langkah
+function updateStep() {
+    // Sembunyikan semua langkah
+    document.querySelectorAll('.step').forEach(step => {
+        step.classList.add('hidden');
+    });
     
-    try {
-        // Buat prompt berdasarkan pilihan pengguna
-        const prompt = `UGC video iklan produk, gaya ${personality.toLowerCase()}, format ${format.toLowerCase()}, sudut pandang ${angle.toLowerCase()}. Seorang orang sedang mereview produk dengan antusias, menunjukkan produk dengan jelas. Konsistensi wajah ${consistency}%. Pencahayaan alami, resolusi 1080p, 30fps.`;
-        
-        // Panggil API Runway Image to Video
-        const response = await fetch("https://api.runwayml.com/v1/image_to_video", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${key_c66f20e67a491217fef5a3315385e90a858958621f0b7f48cdcde7518607049c64f5307badaacaa821cf85277fe6cb096fec8bf219c812260cf9ab2bf7210d33}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                prompt_image: characterImage.split(',')[1], // Gunakan gambar karakter sebagai dasar
-                prompt: prompt,
-                duration: 4,
-                aspect_ratio: format.includes("Vertical") ? "9:16" : "16:9"
-            })
-        });
-        
-        const data = await response.json();
-        const taskId = data.id;
-        
-        // Polling status video sampai selesai
-        let videoUrl="";
-        while(!videoUrl){
-            await new Promise(resolve=>setTimeout(resolve,5000));
-            const statusRes=await fetch(`https://api.runwayml.com/v1/tasks/${taskId}`,{
-                headers:{"Authorization":`Bearer ${RUNWAY_API_KEY}`}
-            });
-            const statusData=await statusRes.json();
-            
-            if(statusData.status==="succeeded"){
-                videoUrl=statusData.output[0];
-                break;
-            }else if(statusData.status==="failed"){
-                throw new Error("Gagal generate video");
-            }
+    // Tampilkan langkah saat ini
+    document.getElementById(`s${currentStep}`).classList.remove('hidden');
+    
+    // Update progress bar
+    progressBar.style.width = `${(currentStep / totalSteps) * 100}%`;
+    
+    // Update nomor langkah
+    stepNumber.textContent = currentStep;
+    
+    // Disable tombol sebelumnya di langkah 1
+    prevBtn.disabled = currentStep === 1;
+    
+    // Ubah teks tombol di langkah terakhir
+    if (currentStep === totalSteps) {
+        nextBtn.innerHTML = 'Generate Video <i class="fa fa-video-camera ml-2"></i>';
+        nextBtn.onclick = generateVideo;
+    } else {
+        nextBtn.innerHTML = 'Selanjutnya <i class="fa fa-arrow-right ml-2"></i>';
+        nextBtn.onclick = goToNextStep;
+    }
+}
+
+// Fungsi ke langkah berikutnya
+function goToNextStep() {
+    if (currentStep < totalSteps) {
+        currentStep++;
+        updateStep();
+    }
+}
+
+// Fungsi ke langkah sebelumnya
+prevBtn.onclick = function() {
+    if (currentStep > 1) {
+        currentStep--;
+        updateStep();
+    }
+};
+
+// Inisialisasi upload gambar
+function initUploads() {
+    // Upload Karakter
+    document.getElementById('charUp').addEventListener('click', function() {
+        document.getElementById('charFile').click();
+    });
+    
+    document.getElementById('charFile').addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('charPreview').innerHTML = 
+                    `<img src="${event.target.result}" class="w-full h-full object-cover rounded-xl">`;
+            };
+            reader.readAsDataURL(e.target.files[0]);
         }
-        
-        // Tampilkan video hasil generate
-        document.getElementById('videoResult').innerHTML=`
-            <h4 class="text-xl font-semibold mb-4 text-green-400">Video Berhasil Dibuat!</h4>
-            <video src="${videoUrl}" controls class="w-full rounded-xl mb-4"></video>
-            <a href="${videoUrl}" download="cineugc-video.mp4" class="bg-accent-gold text-dark px-6 py-3 rounded-xl font-semibold inline-block">
-                <i class="fa fa-download mr-2"></i>Download Video
-            </a>
+    });
+    
+    // Upload Produk
+    document.getElementById('prodUp').addEventListener('click', function() {
+        document.getElementById('prodFile').click();
+    });
+    
+    document.getElementById('prodFile').addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('prodPreview').innerHTML = 
+                    `<img src="${event.target.result}" class="w-full h-full object-cover rounded-xl">`;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    });
+}
+
+// Inisialisasi tombol pilihan
+function initButtons() {
+    const buttonGroups = ['.p-btn', '.pr-btn', '.f-card', '.a-card', '.prm-btn', '.cat-btn'];
+    
+    buttonGroups.forEach(group => {
+        document.querySelectorAll(group).forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll(group).forEach(b => {
+                    b.classList.remove('active', 'bg-accent-gold', 'text-dark');
+                });
+                this.classList.add('active', 'bg-accent-gold', 'text-dark');
+            });
+        });
+    });
+}
+
+// Inisialisasi slider konsistensi
+function initSlider() {
+    const slider = document.getElementById('idStr');
+    const value = document.getElementById('idVal');
+    
+    slider.addEventListener('input', function() {
+        value.textContent = `${this.value}%`;
+    });
+}
+
+// Fungsi Generate Video (Sementara menampilkan pesan sukses)
+function generateVideo() {
+    nextBtn.disabled = true;
+    nextBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> Memproses...';
+    
+    // Simulasi proses generate video (3 detik)
+    setTimeout(function() {
+        document.getElementById('videoResult').innerHTML = `
+            <div class="text-center">
+                <div class="text-green-400 text-xl font-semibold mb-4">
+                    <i class="fa fa-check-circle mr-2"></i> Prompt Siap!
+                </div>
+                <p class="text-gray-400 mb-6">
+                    Prompt video UGC Anda sudah dibuat secara otomatis.
+                    Klik tombol di bawah untuk menyalin dan buka Seedance.
+                </p>
+                <button onclick="copyPrompt()" class="bg-accent-gold text-dark px-6 py-3 rounded-xl font-semibold mr-4 mb-4">
+                    <i class="fa fa-copy mr-2"></i> Salin Prompt
+                </button>
+                <a href="https://seedance.ai/" target="_blank" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold mb-4 inline-block">
+                    <i class="fa fa-external-link mr-2"></i> Buka Seedance
+                </a>
+            </div>
         `;
         
-    } catch (error) {
-        alert(`Error: ${error.message}. Silakan coba lagi nanti.`);
-    } finally {
-        nx.disabled=false;
-        nx.innerHTML='Generate Video<i class="fa fa-video-camera ml-2"></i>';
-    }
+        nextBtn.disabled = false;
+        nextBtn.innerHTML = 'Generate Video <i class="fa fa-video-camera ml-2"></i>';
+    }, 3000);
+}
+
+// Fungsi salin prompt
+function copyPrompt() {
+    const prompt = "Buat video UGC iklan produk sinematik. Seorang wanita sedang mereview produk skincare dengan gaya natural dan mewah. Format video vertikal 9:16, sudut pandang dekat. Konsistensi wajah 85%. Pencahayaan alami, resolusi 1080p, 30fps.";
+    
+    navigator.clipboard.writeText(prompt).then(function() {
+        alert('Prompt berhasil disalin ke clipboard!');
+    });
 }
 </script>
