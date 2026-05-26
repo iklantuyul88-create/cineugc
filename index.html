@@ -1,105 +1,333 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>CineUGC</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <script>
-tailwind.config={
-    theme:{
-        extend:{
-            colors:{
-                dark:'#0A0A0A',
-                darker:'#050505',
-                'dark-gray':'#121212',
-                'medium-gray':'#1E1E1E',
-                'light-gray':'#2A2A2A',
-                'accent-gold':'#D4AF37'
-            },
-            fontFamily:{inter:['Inter','system-ui']}
+/* =========================================================
+   UGC VIDEO GENERATOR - STABLE VERSION
+   Cleaned + safer + Vercel friendly vanilla JS
+   ========================================================= */
+
+window.addEventListener("DOMContentLoaded", () => {
+
+    /* =========================================================
+       GLOBAL STATE
+    ========================================================= */
+    let currentStep = 1;
+    const totalStep = 6;
+
+    let charImageData = "";
+    let prodImageData = "";
+
+    /* =========================================================
+       ELEMENT HELPERS
+    ========================================================= */
+    const $ = (id) => document.getElementById(id);
+
+    const btnPrev = $("prev");
+    const btnNext = $("next");
+
+    const progressBar = $("progress");
+    const stepNumText = $("stepNum");
+
+    const resultBox = $("videoResult");
+
+    /* =========================================================
+       SAFETY CHECK
+    ========================================================= */
+    if (!btnPrev || !btnNext) {
+        console.error("Navigation buttons not found.");
+        return;
+    }
+
+    /* =========================================================
+       STEP VIEW
+    ========================================================= */
+    function refreshStepView() {
+
+        // Hide all steps
+        for (let i = 1; i <= totalStep; i++) {
+            const stepEl = $("s" + i);
+
+            if (stepEl) {
+                stepEl.classList.add("hidden");
+            }
+        }
+
+        // Show active step
+        const activeStep = $("s" + currentStep);
+
+        if (activeStep) {
+            activeStep.classList.remove("hidden");
+        }
+
+        // Update progress bar
+        if (progressBar) {
+            const percent = (currentStep / totalStep) * 100;
+            progressBar.style.width = percent + "%";
+        }
+
+        // Update step number
+        if (stepNumText) {
+            stepNumText.innerText = currentStep;
+        }
+
+        // Previous button
+        btnPrev.disabled = currentStep === 1;
+
+        // Next button label
+        if (currentStep === totalStep) {
+            btnNext.innerText = "Generate Video";
+        } else {
+            btnNext.innerText = "Selanjutnya";
         }
     }
-}
-</script>
-<style>
-.glass{background:rgba(30,30,30,0.7);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1)}
-.glass-light{background:rgba(42,42,42,0.6);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08)}
-.hidden{display:none !important;}
-</style>
-</head>
-<body class="bg-dark text-white font-inter min-h-screen">
-<nav class="glass fixed top-0 left-0 right-0 z-50 px-4 py-3">
-<div class="max-w-7xl mx-auto flex justify-between items-center">
-<div class="flex items-center space-x-2">
-    <i class="fa fa-film text-accent-gold"></i>
-    <h1 class="text-xl font-bold">CineUGC</h1>
-</div>
-<button class="glass-light px-4 py-2 rounded-lg">
-    <i class="fa fa-user-circle mr-2"></i>Akun
-</button>
-</div>
-</nav>
 
-<main class="pt-20 pb-28 px-4 max-w-7xl mx-auto">
-<div class="mb-8">
-<div class="flex justify-between mb-2">
-    <h2 class="text-2xl font-bold">Buat Iklan UGC Sinematik</h2>
-    <span class="text-gray-400">Langkah <span id="stepNum">1</span>/6</span>
-</div>
-<div class="w-full bg-medium-gray rounded-full h-2">
-    <div id="progress" class="bg-accent-gold h-full rounded-full transition-all" style="width:16.66%"></div>
-</div>
-</div>
+    /* =========================================================
+       NAVIGATION
+    ========================================================= */
+    function goNext() {
+        if (currentStep < totalStep) {
+            currentStep++;
+            refreshStepView();
+        }
+    }
 
-<div class="step" id="s1">
-    <h3 class="text-xl font-semibold mb-6">Tambahkan Karakter</h3>
-    <div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 cursor-pointer" id="charUp">
-        <input type="file" id="charFile" accept="image/*" class="hidden">
-        <div id="charPreview" class="w-full h-full flex items-center justify-center">
-            <div class="text-center">
-                <i class="fa fa-user-circle text-5xl text-gray-500 mb-4"></i>
-                <p class="text-gray-400">Seret foto atau klik</p>
-            </div>
-        </div>
-    </div>
-</div>
+    function goPrev() {
+        if (currentStep > 1) {
+            currentStep--;
+            refreshStepView();
+        }
+    }
 
-<div class="step hidden" id="s2">
-    <h3 class="text-xl font-semibold mb-6">Tambahkan Produk</h3>
-    <div class="glass rounded-2xl p-6 h-72 flex flex-col items-center justify-center border-2 border-dashed border-gray-600 cursor-pointer" id="prodUp">
-        <input type="file" id="prodFile" accept="image/*" class="hidden">
-        <div id="prodPreview" class="w-full h-full flex items-center justify-center">
-            <div class="text-center">
-                <i class="fa fa-box text-5xl text-gray-500 mb-4"></i>
-                <p class="text-gray-400">Seret foto atau klik</p>
-            </div>
-        </div>
-    </div>
-</div>
+    btnPrev.addEventListener("click", goPrev);
 
-<div class="step hidden" id="s3"><h3>Langkah 3 Format</h3></div>
-<div class="step hidden" id="s4"><h3>Langkah 4 Sudut</h3></div>
-<div class="step hidden" id="s5"><h3>Langkah 5 Storyboard</h3></div>
-<div class="step hidden" id="s6"><h3>Langkah 6 Ekspor</h3></div>
+    btnNext.addEventListener("click", () => {
 
-</main>
+        if (currentStep === totalStep) {
+            runGenerate();
+        } else {
+            goNext();
+        }
 
-<div class="glass fixed bottom-0 left-0 right-0 px-4 py-4 z-40">
-<div class="max-w-7xl mx-auto flex justify-between">
-<button id="prev" class="glass-light px-6 py-2 rounded-lg" disabled>
-    <i class="fa fa-arrow-left mr-2"></i>Sebelumnya
-</button>
-<button id="next" class="bg-accent-gold text-dark px-6 py-2 rounded-lg font-medium">
-    Selanjutnya<i class="fa fa-arrow-right ml-2"></i>
-</button>
-</div>
-</div>
+    });
 
-<script>
-let current = 1;
-const total = 6;
+    /* =========================================================
+       IMAGE PREVIEW GENERATOR
+       Using objectURL for better performance
+    ========================================================= */
+    function createPreview(container, file) {
+
+        if (!container || !file) return;
+
+        const imageURL = URL.createObjectURL(file);
+
+        container.innerHTML = `
+            <img 
+                src="${imageURL}"
+                style="
+                    width:100%;
+                    height:100%;
+                    object-fit:cover;
+                    border-radius:12px;
+                "
+            >
+        `;
+    }
+
+    /* =========================================================
+       CHARACTER IMAGE UPLOAD
+    ========================================================= */
+    const charArea = $("charUp");
+    const charFile = $("charFile");
+    const charPreview = $("charPreview");
+
+    if (charArea && charFile) {
+
+        charArea.addEventListener("click", () => {
+            charFile.click();
+        });
+
+        charFile.addEventListener("change", (e) => {
+
+            const file = e.target.files[0];
+
+            if (!file) return;
+
+            charImageData = file;
+
+            createPreview(charPreview, file);
+
+        });
+
+    }
+
+    /* =========================================================
+       PRODUCT IMAGE UPLOAD
+    ========================================================= */
+    const prodArea = $("prodUp");
+    const prodFile = $("prodFile");
+    const prodPreview = $("prodPreview");
+
+    if (prodArea && prodFile) {
+
+        prodArea.addEventListener("click", () => {
+            prodFile.click();
+        });
+
+        prodFile.addEventListener("change", (e) => {
+
+            const file = e.target.files[0];
+
+            if (!file) return;
+
+            prodImageData = file;
+
+            createPreview(prodPreview, file);
+
+        });
+
+    }
+
+    /* =========================================================
+       IDENTITY SLIDER
+    ========================================================= */
+    const slider = $("idStr");
+    const sliderVal = $("idVal");
+
+    if (slider && sliderVal) {
+
+        slider.addEventListener("input", function () {
+            sliderVal.innerText = this.value + "%";
+        });
+
+    }
+
+    /* =========================================================
+       ACTIVE BUTTON SYSTEM
+    ========================================================= */
+    function setActiveBtn(selector) {
+
+        const group = document.querySelectorAll(selector);
+
+        if (!group.length) return;
+
+        group.forEach((btn) => {
+
+            btn.addEventListener("click", (e) => {
+
+                group.forEach((b) => {
+                    b.classList.remove(
+                        "active",
+                        "bg-accent-gold",
+                        "text-dark"
+                    );
+                });
+
+                e.currentTarget.classList.add(
+                    "active",
+                    "bg-accent-gold",
+                    "text-dark"
+                );
+
+            });
+
+        });
+
+    }
+
+    setActiveBtn(".p-btn");
+    setActiveBtn(".pr-btn");
+    setActiveBtn(".f-card");
+    setActiveBtn(".a-card");
+    setActiveBtn(".prm-btn");
+
+    /* =========================================================
+       GENERATE VIDEO
+       Demo mode
+    ========================================================= */
+    async function runGenerate() {
+
+        try {
+
+            btnNext.disabled = true;
+            btnNext.innerText = "Memproses...";
+
+            if (resultBox) {
+                resultBox.innerHTML = `
+                    <div style="text-align:center;padding:1rem;">
+                        <p style="color:#ccc;">
+                            Sedang menyiapkan video...
+                        </p>
+                    </div>
+                `;
+            }
+
+            // Simulasi processing
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Final result
+            if (resultBox) {
+                resultBox.innerHTML = `
+                    <div style="text-align:center;padding:1rem;">
+
+                        <p style="
+                            color:#22c55e;
+                            font-size:20px;
+                            font-weight:bold;
+                            margin-bottom:10px;
+                        ">
+                            Video Siap
+                        </p>
+
+                        <p style="
+                            color:#aaa;
+                            line-height:1.6;
+                        ">
+                            Semua data berhasil diproses.
+                            Sistem siap terhubung ke API video generator.
+                        </p>
+
+                    </div>
+                `;
+            }
+
+        } catch (err) {
+
+            console.error(err);
+
+            if (resultBox) {
+                resultBox.innerHTML = `
+                    <div style="text-align:center;padding:1rem;">
+
+                        <p style="
+                            color:#ef4444;
+                            font-size:18px;
+                            font-weight:bold;
+                        ">
+                            Terjadi Error
+                        </p>
+
+                        <p style="color:#aaa;">
+                            Gagal memproses data.
+                        </p>
+
+                    </div>
+                `;
+            }
+
+        } finally {
+
+            btnNext.disabled = false;
+            btnNext.innerText = "Generate Video";
+
+        }
+
+    }
+
+    /* =========================================================
+       INITIALIZE
+    ========================================================= */
+    refreshStepView();
+
+});
+</script>const total = 6;
 
 const prev = document.getElementById('prev');
 const next = document.getElementById('next');
